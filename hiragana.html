@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hiragana Flashcards</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    .perspective-1000 { perspective: 1000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-rose-50 to-indigo-100 min-h-screen" x-data="hiraganaApp()">
+  <div class="container mx-auto px-4 py-8">
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-gray-800 mb-2">Hiragana Flashcards</h1>
+      <p class="text-gray-600">Click a card to flip • <span x-text="flippedCount"></span> / <span x-text="cards.length"></span> flipped</p>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-4 mb-8">
+      <button @click="shuffle()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors">
+        Shuffle
+      </button>
+      <button @click="flipAll()" class="px-6 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg shadow transition-colors">
+        <span x-show="!allFlipped">Flip All</span>
+        <span x-show="allFlipped">Unflip All</span>
+      </button>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-2 mb-8">
+      <button @click="toggleFilter('basic')" 
+              class="px-4 py-2 rounded-lg shadow transition-colors"
+              :class="filters.basic ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        Basic <span x-text="basicCount"></span>
+      </button>
+      <button @click="toggleFilter('dakuon')" 
+              class="px-4 py-2 rounded-lg shadow transition-colors"
+              :class="filters.dakuon ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        Dakuon <span x-text="dakuonCount"></span>
+      </button>
+      <button @click="toggleFilter('handakuon')" 
+              class="px-4 py-2 rounded-lg shadow transition-colors"
+              :class="filters.handakuon ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        Handakuon <span x-text="handakuonCount"></span>
+      </button>
+      <button @click="toggleFilter('youon')" 
+              class="px-4 py-2 rounded-lg shadow transition-colors"
+              :class="filters.youon ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        Youon <span x-text="youonCount"></span>
+      </button>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-4">
+      <template x-for="(card, index) in cards" :key="index">
+        <div class="perspective-1000 w-24 h-32 sm:w-28 sm:h-36 cursor-pointer" @click="flipCard(index)">
+          <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
+               :class="card.flipped ? 'rotate-y-180' : ''">
+            
+            <div class="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center border-2 border-gray-200">
+              <span class="text-3xl sm:text-4xl text-gray-800" x-text="card.hiragana"></span>
+            </div>
+            
+            <div class="absolute w-full h-full backface-hidden bg-rose-500 rounded-xl shadow-lg flex items-center justify-center border-2 border-rose-300 rotate-y-180">
+              <span class="text-2xl sm:text-3xl text-white font-medium" x-text="card.romaji"></span>
+            </div>
+            
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <script>
+    function hiraganaApp() {
+      const categories = {
+        basic: ['あ','い','う','え','お','か','き','く','け','こ','さ','し','す','せ','そ','た','ち','つ','て','と','な','に','ぬ','ね','の','は','ひ','ふ','へ','ほ','ま','み','む','め','も','や','ゆ','よ','ら','り','る','ろ','わ','を','ん'],
+        dakuon: ['が','ぎ','ぐ','げ','ご','ざ','じ','ず','ぜ','ぞ','だ','ぢ','づ','で','ど','ば','び','ぶ','べ','ぼ'],
+        handakuon: ['ぱ','ぴ','ぷ','ぺ','ぽ'],
+        youon: ['きゃ','きゅ','きょ','しゃ','しゅ','しょ','ちゃ','ちゅ','ちょ','にゃ','にゅ','にょ','ひゃ','ひゅ','ひょ','みゃ','みゅ','みょ','りゃ','りゅ','りょ','ぎゃ','ぎゅ','ぎょ','じゃ','じゅ','じょ','びゃ','びゅ','びょ','ぴゃ','ぴゅ','ぴょ']
+      };
+
+      const hiraganaData = [
+        { hiragana: 'あ', romaji: 'a', category: 'basic' }, { hiragana: 'い', romaji: 'i', category: 'basic' }, { hiragana: 'う', romaji: 'u', category: 'basic' },
+        { hiragana: 'え', romaji: 'e', category: 'basic' }, { hiragana: 'お', romaji: 'o', category: 'basic' },
+        { hiragana: 'か', romaji: 'ka', category: 'basic' }, { hiragana: 'き', romaji: 'ki', category: 'basic' }, { hiragana: 'く', romaji: 'ku', category: 'basic' },
+        { hiragana: 'け', romaji: 'ke', category: 'basic' }, { hiragana: 'こ', romaji: 'ko', category: 'basic' },
+        { hiragana: 'さ', romaji: 'sa', category: 'basic' }, { hiragana: 'し', romaji: 'shi', category: 'basic' }, { hiragana: 'す', romaji: 'su', category: 'basic' },
+        { hiragana: 'せ', romaji: 'se', category: 'basic' }, { hiragana: 'そ', romaji: 'so', category: 'basic' },
+        { hiragana: 'た', romaji: 'ta', category: 'basic' }, { hiragana: 'ち', romaji: 'chi', category: 'basic' }, { hiragana: 'つ', romaji: 'tsu', category: 'basic' },
+        { hiragana: 'て', romaji: 'te', category: 'basic' }, { hiragana: 'と', romaji: 'to', category: 'basic' },
+        { hiragana: 'な', romaji: 'na', category: 'basic' }, { hiragana: 'に', romaji: 'ni', category: 'basic' }, { hiragana: 'ぬ', romaji: 'nu', category: 'basic' },
+        { hiragana: 'ね', romaji: 'ne', category: 'basic' }, { hiragana: 'の', romaji: 'no', category: 'basic' },
+        { hiragana: 'は', romaji: 'ha', category: 'basic' }, { hiragana: 'ひ', romaji: 'hi', category: 'basic' }, { hiragana: 'ふ', romaji: 'fu', category: 'basic' },
+        { hiragana: 'へ', romaji: 'he', category: 'basic' }, { hiragana: 'ほ', romaji: 'ho', category: 'basic' },
+        { hiragana: 'ま', romaji: 'ma', category: 'basic' }, { hiragana: 'み', romaji: 'mi', category: 'basic' }, { hiragana: 'む', romaji: 'mu', category: 'basic' },
+        { hiragana: 'め', romaji: 'me', category: 'basic' }, { hiragana: 'も', romaji: 'mo', category: 'basic' },
+        { hiragana: 'や', romaji: 'ya', category: 'basic' }, { hiragana: 'ゆ', romaji: 'yu', category: 'basic' }, { hiragana: 'よ', romaji: 'yo', category: 'basic' },
+        { hiragana: 'ら', romaji: 'ra', category: 'basic' }, { hiragana: 'り', romaji: 'ri', category: 'basic' }, { hiragana: 'る', romaji: 'ru', category: 'basic' },
+        { hiragana: 'ろ', romaji: 'ro', category: 'basic' }, { hiragana: 'わ', romaji: 'wa', category: 'basic' }, { hiragana: 'を', romaji: 'wo', category: 'basic' },
+        { hiragana: 'ん', romaji: 'n', category: 'basic' },
+        { hiragana: 'が', romaji: 'ga', category: 'dakuon' }, { hiragana: 'ぎ', romaji: 'gi', category: 'dakuon' }, { hiragana: 'ぐ', romaji: 'gu', category: 'dakuon' },
+        { hiragana: 'げ', romaji: 'ge', category: 'dakuon' }, { hiragana: 'ご', romaji: 'go', category: 'dakuon' },
+        { hiragana: 'ざ', romaji: 'za', category: 'dakuon' }, { hiragana: 'じ', romaji: 'ji', category: 'dakuon' }, { hiragana: 'ず', romaji: 'zu', category: 'dakuon' },
+        { hiragana: 'ぜ', romaji: 'ze', category: 'dakuon' }, { hiragana: 'ぞ', romaji: 'zo', category: 'dakuon' },
+        { hiragana: 'だ', romaji: 'da', category: 'dakuon' }, { hiragana: 'ぢ', romaji: 'ji', category: 'dakuon' }, { hiragana: 'づ', romaji: 'zu', category: 'dakuon' },
+        { hiragana: 'で', romaji: 'de', category: 'dakuon' }, { hiragana: 'ど', romaji: 'do', category: 'dakuon' },
+        { hiragana: 'ば', romaji: 'ba', category: 'dakuon' }, { hiragana: 'び', romaji: 'bi', category: 'dakuon' }, { hiragana: 'ぶ', romaji: 'bu', category: 'dakuon' },
+        { hiragana: 'べ', romaji: 'be', category: 'dakuon' }, { hiragana: 'ぼ', romaji: 'bo', category: 'dakuon' },
+        { hiragana: 'ぱ', romaji: 'pa', category: 'handakuon' }, { hiragana: 'ぴ', romaji: 'pi', category: 'handakuon' }, { hiragana: 'ぷ', romaji: 'pu', category: 'handakuon' },
+        { hiragana: 'ぺ', romaji: 'pe', category: 'handakuon' }, { hiragana: 'ぽ', romaji: 'po', category: 'handakuon' },
+        { hiragana: 'きゃ', romaji: 'kya', category: 'youon' }, { hiragana: 'きゅ', romaji: 'kyu', category: 'youon' }, { hiragana: 'きょ', romaji: 'kyo', category: 'youon' },
+        { hiragana: 'しゃ', romaji: 'sha', category: 'youon' }, { hiragana: 'しゅ', romaji: 'shu', category: 'youon' }, { hiragana: 'しょ', romaji: 'sho', category: 'youon' },
+        { hiragana: 'ちゃ', romaji: 'cha', category: 'youon' }, { hiragana: 'ちゅ', romaji: 'chu', category: 'youon' }, { hiragana: 'ちょ', romaji: 'cho', category: 'youon' },
+        { hiragana: 'にゃ', romaji: 'nya', category: 'youon' }, { hiragana: 'にゅ', romaji: 'nyu', category: 'youon' }, { hiragana: 'にょ', romaji: 'nyo', category: 'youon' },
+        { hiragana: 'ひゃ', romaji: 'hya', category: 'youon' }, { hiragana: 'ひゅ', romaji: 'hyu', category: 'youon' }, { hiragana: 'ひょ', romaji: 'hyo', category: 'youon' },
+        { hiragana: 'みゃ', romaji: 'mya', category: 'youon' }, { hiragana: 'みゅ', romaji: 'myu', category: 'youon' }, { hiragana: 'みょ', romaji: 'myo', category: 'youon' },
+        { hiragana: 'りゃ', romaji: 'rya', category: 'youon' }, { hiragana: 'りゅ', romaji: 'ryu', category: 'youon' }, { hiragana: 'りょ', romaji: 'ryo', category: 'youon' },
+        { hiragana: 'ぎゃ', romaji: 'gya', category: 'youon' }, { hiragana: 'ぎゅ', romaji: 'gyu', category: 'youon' }, { hiragana: 'ぎょ', romaji: 'gyo', category: 'youon' },
+        { hiragana: 'じゃ', romaji: 'ja', category: 'youon' }, { hiragana: 'じゅ', romaji: 'ju', category: 'youon' }, { hiragana: 'じょ', romaji: 'jo', category: 'youon' },
+        { hiragana: 'びゃ', romaji: 'bya', category: 'youon' }, { hiragana: 'びゅ', romaji: 'byu', category: 'youon' }, { hiragana: 'びょ', romaji: 'byo', category: 'youon' },
+        { hiragana: 'ぴゃ', romaji: 'pya', category: 'youon' }, { hiragana: 'ぴゅ', romaji: 'pyu', category: 'youon' }, { hiragana: 'ぴょ', romaji: 'pyo', category: 'youon' }
+      ];
+
+      return {
+        allCards: hiraganaData.map(item => ({ ...item, flipped: false })),
+        filters: { basic: true, dakuon: true, handakuon: true, youon: true },
+
+        get cards() {
+          return this.allCards.filter(card => this.filters[card.category]);
+        },
+
+        get basicCount() { return this.allCards.filter(c => c.category === 'basic').length; },
+        get dakuonCount() { return this.allCards.filter(c => c.category === 'dakuon').length; },
+        get handakuonCount() { return this.allCards.filter(c => c.category === 'handakuon').length; },
+        get youonCount() { return this.allCards.filter(c => c.category === 'youon').length; },
+        
+        get flippedCount() {
+          return this.cards.filter(c => c.flipped).length;
+        },
+        
+        get allFlipped() {
+          return this.flippedCount === this.cards.length;
+        },
+
+        toggleFilter(filter) {
+          this.filters[filter] = !this.filters[filter];
+        },
+
+        flipCard(index) {
+          const card = this.cards[index];
+          card.flipped = !card.flipped;
+        },
+        
+        shuffle() {
+          const visibleCards = this.cards;
+          for (let i = visibleCards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const cardI = visibleCards[i];
+            const cardJ = visibleCards[j];
+            const idxI = this.allCards.indexOf(cardI);
+            const idxJ = this.allCards.indexOf(cardJ);
+            [this.allCards[idxI], this.allCards[idxJ]] = [this.allCards[idxJ], this.allCards[idxI]];
+          }
+        },
+        
+        flipAll() {
+          const shouldFlip = !this.allFlipped;
+          this.cards.forEach(card => card.flipped = shouldFlip);
+        }
+      };
+    }
+  </script>
+</body>
+</html>
