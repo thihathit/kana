@@ -41,8 +41,10 @@ Japanese hiragana flashcard web application with flip cards, shuffle, and catego
 ## File Structure
 ```
 /Users/thihathit/Desktop/kana/
-├── hiragana.html    # Main application file
-└── CONTEXT.md      # This file
+├── index.html       # Landing page with links to flashcards
+├── hiragana.html    # Hiragana flashcard application
+├── katakana.html    # Katakana flashcard application
+└── CONTEXT.md       # This file
 ```
 
 ## How to Use

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katakana Flashcards</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    .perspective-1000 { perspective: 1000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-50 to-cyan-100 min-h-screen" x-data="katakanaApp()">
+  <div class="container mx-auto px-4 py-8">
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-gray-800 mb-2">Katakana Flashcards</h1>
+      <p class="text-gray-600">Click a card to flip • <span x-text="flippedCount"></span> / <span x-text="cards.length"></span> flipped</p>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-4 mb-8">
+      <button @click="shuffle()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors">
+        Shuffle
+      </button>
+      <button @click="flipAll()" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow transition-colors">
+        <span x-show="!allFlipped">Flip All</span>
+        <span x-show="allFlipped">Unflip All</span>
+      </button>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-2 mb-8">
+      <button @click="toggleFilter('basic')" 
+              class="px-4 py-2 rounded-lg shadow transition-colors"
+              :class="filters.basic ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        Basic <span x-text="basicCount"></span>
+      </button>
+      <button @click="toggleFilter('dakuon')" 
+              class="px-4 py-2 rounded-lg shadow transition-colors"
+              :class="filters.dakuon ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        Dakuon <span x-text="dakuonCount"></span>
+      </button>
+      <button @click="toggleFilter('handakuon')" 
+              class="px-4 py-2 rounded-lg shadow transition-colors"
+              :class="filters.handakuon ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        Handakuon <span x-text="handakuonCount"></span>
+      </button>
+      <button @click="toggleFilter('youon')" 
+              class="px-4 py-2 rounded-lg shadow transition-colors"
+              :class="filters.youon ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        Youon <span x-text="youonCount"></span>
+      </button>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-4">
+      <template x-for="(card, index) in cards" :key="index">
+        <div class="perspective-1000 w-24 h-32 sm:w-28 sm:h-36 cursor-pointer" @click="flipCard(index)">
+          <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
+               :class="card.flipped ? 'rotate-y-180' : ''">
+            
+            <div class="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center border-2 border-gray-200">
+              <span class="text-3xl sm:text-4xl text-gray-800" x-text="card.katakana"></span>
+            </div>
+            
+            <div class="absolute w-full h-full backface-hidden bg-emerald-500 rounded-xl shadow-lg flex items-center justify-center border-2 border-emerald-300 rotate-y-180">
+              <span class="text-2xl sm:text-3xl text-white font-medium" x-text="card.romaji"></span>
+            </div>
+            
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <script>
+    function katakanaApp() {
+      const katakanaData = [
+        { katakana: 'ア', romaji: 'a', category: 'basic' }, { katakana: 'イ', romaji: 'i', category: 'basic' }, { katakana: 'ウ', romaji: 'u', category: 'basic' },
+        { katakana: 'エ', romaji: 'e', category: 'basic' }, { katakana: 'オ', romaji: 'o', category: 'basic' },
+        { katakana: 'カ', romaji: 'ka', category: 'basic' }, { katakana: 'キ', romaji: 'ki', category: 'basic' }, { katakana: 'ク', romaji: 'ku', category: 'basic' },
+        { katakana: 'ケ', romaji: 'ke', category: 'basic' }, { katakana: 'コ', romaji: 'ko', category: 'basic' },
+        { katakana: 'サ', romaji: 'sa', category: 'basic' }, { katakana: 'シ', romaji: 'shi', category: 'basic' }, { katakana: 'ス', romaji: 'su', category: 'basic' },
+        { katakana: 'セ', romaji: 'se', category: 'basic' }, { katakana: 'ソ', romaji: 'so', category: 'basic' },
+        { katakana: 'タ', romaji: 'ta', category: 'basic' }, { katakana: 'チ', romaji: 'chi', category: 'basic' }, { katakana: 'ツ', romaji: 'tsu', category: 'basic' },
+        { katakana: 'テ', romaji: 'te', category: 'basic' }, { katakana: 'ト', romaji: 'to', category: 'basic' },
+        { katakana: 'ナ', romaji: 'na', category: 'basic' }, { katakana: 'ニ', romaji: 'ni', category: 'basic' }, { katakana: 'ヌ', romaji: 'nu', category: 'basic' },
+        { katakana: 'ネ', romaji: 'ne', category: 'basic' }, { katakana: 'ノ', romaji: 'no', category: 'basic' },
+        { katakana: 'ハ', romaji: 'ha', category: 'basic' }, { katakana: 'ヒ', romaji: 'hi', category: 'basic' }, { katakana: 'フ', romaji: 'fu', category: 'basic' },
+        { katakana: 'ヘ', romaji: 'he', category: 'basic' }, { katakana: 'ホ', romaji: 'ho', category: 'basic' },
+        { katakana: 'マ', romaji: 'ma', category: 'basic' }, { katakana: 'ミ', romaji: 'mi', category: 'basic' }, { katakana: 'ム', romaji: 'mu', category: 'basic' },
+        { katakana: 'メ', romaji: 'me', category: 'basic' }, { katakana: 'モ', romaji: 'mo', category: 'basic' },
+        { katakana: 'ヤ', romaji: 'ya', category: 'basic' }, { katakana: 'ユ', romaji: 'yu', category: 'basic' }, { katakana: 'ヨ', romaji: 'yo', category: 'basic' },
+        { katakana: 'ラ', romaji: 'ra', category: 'basic' }, { katakana: 'リ', romaji: 'ri', category: 'basic' }, { katakana: 'ル', romaji: 'ru', category: 'basic' },
+        { katakana: 'ロ', romaji: 'ro', category: 'basic' }, { katakana: 'ワ', romaji: 'wa', category: 'basic' }, { katakana: 'ヲ', romaji: 'wo', category: 'basic' },
+        { katakana: 'ン', romaji: 'n', category: 'basic' },
+        { katakana: 'ガ', romaji: 'ga', category: 'dakuon' }, { katakana: 'ギ', romaji: 'gi', category: 'dakuon' }, { katakana: 'グ', romaji: 'gu', category: 'dakuon' },
+        { katakana: 'ゲ', romaji: 'ge', category: 'dakuon' }, { katakana: 'ゴ', romaji: 'go', category: 'dakuon' },
+        { katakana: 'ザ', romaji: 'za', category: 'dakuon' }, { katakana: 'ジ', romaji: 'ji', category: 'dakuon' }, { katakana: 'ズ', romaji: 'zu', category: 'dakuon' },
+        { katakana: 'ゼ', romaji: 'ze', category: 'dakuon' }, { katakana: 'ゾ', romaji: 'zo', category: 'dakuon' },
+        { katakana: 'ダ', romaji: 'da', category: 'dakuon' }, { katakana: 'ヂ', romaji: 'ji', category: 'dakuon' }, { katakana: 'ヅ', romaji: 'zu', category: 'dakuon' },
+        { katakana: 'デ', romaji: 'de', category: 'dakuon' }, { katakana: 'ド', romaji: 'do', category: 'dakuon' },
+        { katakana: 'バ', romaji: 'ba', category: 'dakuon' }, { katakana: 'ビ', romaji: 'bi', category: 'dakuon' }, { katakana: 'ブ', romaji: 'bu', category: 'dakuon' },
+        { katakana: 'ベ', romaji: 'be', category: 'dakuon' }, { katakana: 'ボ', romaji: 'bo', category: 'dakuon' },
+        { katakana: 'パ', romaji: 'pa', category: 'handakuon' }, { katakana: 'ピ', romaji: 'pi', category: 'handakuon' }, { katakana: 'プ', romaji: 'pu', category: 'handakuon' },
+        { katakana: 'ペ', romaji: 'pe', category: 'handakuon' }, { katakana: 'ポ', romaji: 'po', category: 'handakuon' },
+        { katakana: 'キャ', romaji: 'kya', category: 'youon' }, { katakana: 'キュ', romaji: 'kyu', category: 'youon' }, { katakana: 'キョ', romaji: 'kyo', category: 'youon' },
+        { katakana: 'シャ', romaji: 'sha', category: 'youon' }, { katakana: 'シュ', romaji: 'shu', category: 'youon' }, { katakana: 'ショ', romaji: 'sho', category: 'youon' },
+        { katakana: 'チャ', romaji: 'cha', category: 'youon' }, { katakana: 'チュ', romaji: 'chu', category: 'youon' }, { katakana: 'チョ', romaji: 'cho', category: 'youon' },
+        { katakana: 'ニャ', romaji: 'nya', category: 'youon' }, { katakana: 'ニュ', romaji: 'nyu', category: 'youon' }, { katakana: 'ニョ', romaji: 'nyo', category: 'youon' },
+        { katakana: 'ヒャ', romaji: 'hya', category: 'youon' }, { katakana: 'ヒュ', romaji: 'hyu', category: 'youon' }, { katakana: 'ヒョ', romaji: 'hyo', category: 'youon' },
+        { katakana: 'ミャ', romaji: 'mya', category: 'youon' }, { katakana: 'ミュ', romaji: 'myu', category: 'youon' }, { katakana: 'ミョ', romaji: 'myo', category: 'youon' },
+        { katakana: 'リャ', romaji: 'rya', category: 'youon' }, { katakana: 'リュ', romaji: 'ryu', category: 'youon' }, { katakana: 'リョ', romaji: 'ryo', category: 'youon' },
+        { katakana: 'ギャ', romaji: 'gya', category: 'youon' }, { katakana: 'ギュ', romaji: 'gyu', category: 'youon' }, { katakana: 'ギョ', romaji: 'gyo', category: 'youon' },
+        { katakana: 'ジャ', romaji: 'ja', category: 'youon' }, { katakana: 'ジュ', romaji: 'ju', category: 'youon' }, { katakana: 'ジョ', romaji: 'jo', category: 'youon' },
+        { katakana: 'ビャ', romaji: 'bya', category: 'youon' }, { katakana: 'ビュ', romaji: 'byu', category: 'youon' }, { katakana: 'ビョ', romaji: 'byo', category: 'youon' },
+        { katakana: 'ピャ', romaji: 'pya', category: 'youon' }, { katakana: 'ピュ', romaji: 'pyu', category: 'youon' }, { katakana: 'ピョ', romaji: 'pyo', category: 'youon' }
+      ];
+
+      return {
+        allCards: katakanaData.map(item => ({ ...item, flipped: false })),
+        filters: { basic: true, dakuon: true, handakuon: true, youon: true },
+
+        get cards() {
+          return this.allCards.filter(card => this.filters[card.category]);
+        },
+
+        get basicCount() { return this.allCards.filter(c => c.category === 'basic').length; },
+        get dakuonCount() { return this.allCards.filter(c => c.category === 'dakuon').length; },
+        get handakuonCount() { return this.allCards.filter(c => c.category === 'handakuon').length; },
+        get youonCount() { return this.allCards.filter(c => c.category === 'youon').length; },
+        
+        get flippedCount() {
+          return this.cards.filter(c => c.flipped).length;
+        },
+        
+        get allFlipped() {
+          return this.flippedCount === this.cards.length;
+        },
+
+        toggleFilter(filter) {
+          this.filters[filter] = !this.filters[filter];
+        },
+
+        flipCard(index) {
+          const card = this.cards[index];
+          card.flipped = !card.flipped;
+        },
+        
+        shuffle() {
+          const visibleCards = this.cards;
+          for (let i = visibleCards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const cardI = visibleCards[i];
+            const cardJ = visibleCards[j];
+            const idxI = this.allCards.indexOf(cardI);
+            const idxJ = this.allCards.indexOf(cardJ);
+            [this.allCards[idxI], this.allCards[idxJ]] = [this.allCards[idxJ], this.allCards[idxI]];
+          }
+        },
+        
+        flipAll() {
+          const shouldFlip = !this.allFlipped;
+          this.cards.forEach(card => card.flipped = shouldFlip);
+        }
+      };
+    }
+  </script>
+</body>
+</html>
