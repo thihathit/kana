@@ -44,8 +44,24 @@ Japanese hiragana flashcard web application with flip cards, shuffle, and catego
 ├── index.html       # Landing page with links to flashcards
 ├── hiragana.html    # Hiragana flashcard application
 ├── katakana.html    # Katakana flashcard application
+├── kanji.html       # Kanji flashcard application
 └── CONTEXT.md       # This file
 ```
+
+## Features by Application
+
+### Hiragana & Katakana (similar features)
+- **103 characters** each with flip cards
+- **Categories**: Basic (46), Dakuon (20), Handakuon (5), Youon (33)
+- **Buttons**: Shuffle, Flip All/Unflip All
+- **Category filter toggles**
+
+### Kanji Flashcards
+- **~900+ kanji** with readings and meanings
+- **Categories by JLPT level**: N5, N4, N3, N2, N1
+- Default: N5 and N4 enabled
+- **Buttons**: Shuffle, Flip All/Unflip All
+- Card back shows reading + meaning
 
 ## How to Use
 1. Open `hiragana.html` in a browser
