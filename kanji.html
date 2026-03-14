@@ -14,63 +14,63 @@
   </style>
 </head>
 <body class="bg-gradient-to-br from-amber-50 to-orange-100 min-h-screen" x-data="kanjiApp()">
-  <div class="container mx-auto px-4 py-8">
-    <div class="text-center mb-8">
-      <h1 class="text-4xl font-bold text-gray-800 mb-2">Kanji Flashcards</h1>
-      <p class="text-gray-600">Click a card to flip • <span x-text="flippedCount"></span> / <span x-text="cards.length"></span> flipped</p>
+  <div class="container mx-auto px-2 py-6 sm:px-4 sm:py-8">
+    <div class="text-center mb-6 sm:mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">Kanji Flashcards</h1>
+      <p class="text-gray-600 text-sm sm:text-base">Click a card to flip • <span x-text="flippedCount"></span> / <span x-text="cards.length"></span> flipped</p>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-4 mb-8">
-      <button @click="shuffle()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors">
+    <div class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6">
+      <button @click="shuffle()" class="px-4 sm:px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
         Shuffle
       </button>
-      <button @click="flipAll()" class="px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow transition-colors">
+      <button @click="flipAll()" class="px-4 sm:px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
         <span x-show="!allFlipped">Flip All</span>
         <span x-show="allFlipped">Unflip All</span>
       </button>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-2 mb-8">
+    <div class="flex flex-wrap justify-center gap-1 sm:gap-2 mb-6">
       <button @click="toggleFilter('n5')" 
-              class="px-4 py-2 rounded-lg shadow transition-colors"
+              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
               :class="filters.n5 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
         N5 <span x-text="n5Count"></span>
       </button>
       <button @click="toggleFilter('n4')" 
-              class="px-4 py-2 rounded-lg shadow transition-colors"
+              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
               :class="filters.n4 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
         N4 <span x-text="n4Count"></span>
       </button>
       <button @click="toggleFilter('n3')" 
-              class="px-4 py-2 rounded-lg shadow transition-colors"
+              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
               :class="filters.n3 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
         N3 <span x-text="n3Count"></span>
       </button>
       <button @click="toggleFilter('n2')" 
-              class="px-4 py-2 rounded-lg shadow transition-colors"
+              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
               :class="filters.n2 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
         N2 <span x-text="n2Count"></span>
       </button>
       <button @click="toggleFilter('n1')" 
-              class="px-4 py-2 rounded-lg shadow transition-colors"
+              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
               :class="filters.n1 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
         N1 <span x-text="n1Count"></span>
       </button>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-4">
+    <div class="flex flex-wrap justify-center gap-2 sm:gap-3">
       <template x-for="(card, index) in cards" :key="index">
-        <div class="perspective-1000 w-24 h-32 sm:w-28 sm:h-36 cursor-pointer" @click="flipCard(index)">
+        <div class="perspective-1000 w-20 h-28 sm:w-32 sm:h-44 cursor-pointer" @click="flipCard(index)">
           <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
                :class="card.flipped ? 'rotate-y-180' : ''">
             
-            <div class="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center border-2 border-gray-200">
-              <span class="text-3xl sm:text-4xl text-gray-800" x-text="card.kanji"></span>
+            <div class="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center border-2 border-gray-300 p-2">
+              <span class="text-4xl sm:text-5xl text-gray-800" x-text="card.kanji"></span>
             </div>
             
-            <div class="absolute w-full h-full backface-hidden bg-amber-500 rounded-xl shadow-lg flex flex-col items-center justify-center border-2 border-amber-300 rotate-y-180 p-2">
-              <span class="text-xl sm:text-2xl text-white font-medium" x-text="card.reading"></span>
-              <span class="text-xs sm:text-sm text-amber-100 mt-1 text-center" x-text="card.meaning"></span>
+            <div class="absolute w-full h-full backface-hidden bg-amber-500 rounded-xl shadow-lg flex flex-col items-center justify-center border-2 border-amber-300 rotate-y-180 p-1 sm:p-2">
+              <span class="text-lg sm:text-2xl text-white font-semibold" x-text="card.reading"></span>
+              <span class="text-xs sm:text-sm text-amber-100 mt-1 text-center leading-tight" x-text="card.meaning"></span>
             </div>
             
           </div>

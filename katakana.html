@@ -14,57 +14,57 @@
   </style>
 </head>
 <body class="bg-gradient-to-br from-emerald-50 to-cyan-100 min-h-screen" x-data="katakanaApp()">
-  <div class="container mx-auto px-4 py-8">
-    <div class="text-center mb-8">
-      <h1 class="text-4xl font-bold text-gray-800 mb-2">Katakana Flashcards</h1>
-      <p class="text-gray-600">Click a card to flip • <span x-text="flippedCount"></span> / <span x-text="cards.length"></span> flipped</p>
+  <div class="container mx-auto px-2 py-6 sm:px-4 sm:py-8">
+    <div class="text-center mb-6 sm:mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">Katakana Flashcards</h1>
+      <p class="text-gray-600 text-sm sm:text-base">Click a card to flip • <span x-text="flippedCount"></span> / <span x-text="cards.length"></span> flipped</p>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-4 mb-8">
-      <button @click="shuffle()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors">
+    <div class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6">
+      <button @click="shuffle()" class="px-4 sm:px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
         Shuffle
       </button>
-      <button @click="flipAll()" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow transition-colors">
+      <button @click="flipAll()" class="px-4 sm:px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
         <span x-show="!allFlipped">Flip All</span>
         <span x-show="allFlipped">Unflip All</span>
       </button>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-2 mb-8">
+    <div class="flex flex-wrap justify-center gap-1 sm:gap-2 mb-6">
       <button @click="toggleFilter('basic')" 
-              class="px-4 py-2 rounded-lg shadow transition-colors"
+              class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
               :class="filters.basic ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
         Basic <span x-text="basicCount"></span>
       </button>
       <button @click="toggleFilter('dakuon')" 
-              class="px-4 py-2 rounded-lg shadow transition-colors"
+              class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
               :class="filters.dakuon ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
         Dakuon <span x-text="dakuonCount"></span>
       </button>
       <button @click="toggleFilter('handakuon')" 
-              class="px-4 py-2 rounded-lg shadow transition-colors"
+              class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
               :class="filters.handakuon ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
         Handakuon <span x-text="handakuonCount"></span>
       </button>
       <button @click="toggleFilter('youon')" 
-              class="px-4 py-2 rounded-lg shadow transition-colors"
+              class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
               :class="filters.youon ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
         Youon <span x-text="youonCount"></span>
       </button>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-4">
+    <div class="flex flex-wrap justify-center gap-2 sm:gap-3">
       <template x-for="(card, index) in cards" :key="index">
-        <div class="perspective-1000 w-24 h-32 sm:w-28 sm:h-36 cursor-pointer" @click="flipCard(index)">
+        <div class="perspective-1000 w-20 h-28 sm:w-32 sm:h-44 cursor-pointer" @click="flipCard(index)">
           <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
                :class="card.flipped ? 'rotate-y-180' : ''">
             
-            <div class="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center border-2 border-gray-200">
-              <span class="text-3xl sm:text-4xl text-gray-800" x-text="card.katakana"></span>
+            <div class="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center border-2 border-gray-300 p-2">
+              <span class="text-4xl sm:text-5xl text-gray-800" x-text="card.katakana"></span>
             </div>
             
             <div class="absolute w-full h-full backface-hidden bg-emerald-500 rounded-xl shadow-lg flex items-center justify-center border-2 border-emerald-300 rotate-y-180">
-              <span class="text-2xl sm:text-3xl text-white font-medium" x-text="card.romaji"></span>
+              <span class="text-2xl sm:text-3xl text-white font-semibold" x-text="card.romaji"></span>
             </div>
             
           </div>
