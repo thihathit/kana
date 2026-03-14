@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <style>
+    [x-cloak] { display: none !important; }
     .perspective-1000 { perspective: 1000px; }
     .transform-style-3d { transform-style: preserve-3d; }
     .backface-hidden { backface-visibility: hidden; }
@@ -27,6 +28,10 @@
       <button @click="flipAll()" class="px-4 sm:px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
         <span x-show="!allFlipped">Flip All</span>
         <span x-show="allFlipped">Unflip All</span>
+      </button>
+      <button @click="layout = layout === 'grid' ? 'single' : 'grid'" class="px-4 sm:px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
+        <span x-show="layout === 'grid'">Single View</span>
+        <span x-show="layout === 'single'">Grid View</span>
       </button>
     </div>
 
@@ -53,7 +58,7 @@
       </button>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-2 sm:gap-3">
+    <div class="flex flex-wrap justify-center gap-2 sm:gap-3" x-show="layout === 'grid'">
       <template x-for="(card, index) in cards" :key="index">
         <div class="perspective-1000 w-20 h-28 sm:w-32 sm:h-44 cursor-pointer" @click="flipCard(index)">
           <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
@@ -70,6 +75,33 @@
           </div>
         </div>
       </template>
+    </div>
+
+    <div x-show="layout === 'single'" x-cloak class="flex flex-col items-center">
+      <div class="perspective-1000 w-48 h-64 sm:w-64 sm:h-80 cursor-pointer mb-6" @click="toggleCurrentCard()">
+        <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
+             :class="currentCard?.flipped ? 'rotate-y-180' : ''">
+          
+          <div class="absolute w-full h-full backface-hidden bg-white rounded-2xl shadow-2xl flex items-center justify-center border-4 border-gray-300 p-4">
+            <span class="text-7xl sm:text-8xl text-gray-800" x-text="currentCard?.katakana"></span>
+          </div>
+          
+          <div class="absolute w-full h-full backface-hidden bg-emerald-500 rounded-2xl shadow-2xl flex items-center justify-center border-4 border-emerald-300 rotate-y-180">
+            <span class="text-4xl sm:text-5xl text-white font-semibold" x-text="currentCard?.romaji"></span>
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-4">
+        <button @click="prevCard()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition-colors text-lg">
+          ← Prev
+        </button>
+        <span class="text-gray-600 font-medium min-w-[80px] text-center" x-text="(currentIndex + 1) + ' / ' + cards.length"></span>
+        <button @click="nextCard()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition-colors text-lg">
+          Next →
+        </button>
+      </div>
     </div>
   </div>
 
@@ -120,9 +152,15 @@
       return {
         allCards: katakanaData.map(item => ({ ...item, flipped: false })),
         filters: { basic: true, dakuon: true, handakuon: true, youon: true },
+        layout: 'grid',
+        currentIndex: 0,
 
         get cards() {
           return this.allCards.filter(card => this.filters[card.category]);
+        },
+
+        get currentCard() {
+          return this.cards[this.currentIndex] || null;
         },
 
         get basicCount() { return this.allCards.filter(c => c.category === 'basic').length; },
@@ -140,11 +178,34 @@
 
         toggleFilter(filter) {
           this.filters[filter] = !this.filters[filter];
+          this.currentIndex = 0;
         },
 
         flipCard(index) {
           const card = this.cards[index];
           card.flipped = !card.flipped;
+        },
+
+        toggleCurrentCard() {
+          if (this.currentCard) {
+            this.currentCard.flipped = !this.currentCard.flipped;
+          }
+        },
+
+        nextCard() {
+          if (this.currentIndex < this.cards.length - 1) {
+            this.currentIndex++;
+          } else {
+            this.currentIndex = 0;
+          }
+        },
+
+        prevCard() {
+          if (this.currentIndex > 0) {
+            this.currentIndex--;
+          } else {
+            this.currentIndex = this.cards.length - 1;
+          }
         },
         
         shuffle() {
