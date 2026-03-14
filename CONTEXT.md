@@ -64,7 +64,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ## Features by Application
 
 ### Combined (Hiragana + Katakana)
-- **206 characters** (103 hiragana + 103 katakana)
+- **208 characters** (104 hiragana + 104 katakana)
 - Cards color-coded: rose for hiragana, emerald for katakana
 - **Type filters**: Hiragana, Katakana
 - **Category filters**: Basic (92), Dakuon (40), Handakuon (10), Youon (66)
