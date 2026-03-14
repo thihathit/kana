@@ -56,16 +56,32 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ├── index.html       # Landing page with links to flashcards
 ├── hiragana.html    # Hiragana flashcard application
 ├── katakana.html    # Katakana flashcard application
+├── combined.html    # Combined Hiragana + Katakana
 ├── kanji.html       # Kanji flashcard application (JLPT N5-N1)
 └── CONTEXT.md       # This file
 ```
+
+## Features by Application
+
+### Combined (Hiragana + Katakana)
+- **206 characters** (103 hiragana + 103 katakana)
+- Cards color-coded: rose for hiragana, emerald for katakana
+- **Categories**: Hiragana, Katakana filter toggles
+- **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle
+
+### Hiragana & Katakana (similar features)
+- **103 characters** each with flip cards
+- **Categories**: Basic (46), Dakuon (20), Handakuon (5), Youon (33)
+- **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle
+- **Category filter toggles**
 
 ## Visual Design
 - Mobile-first responsive design
 - Reduced side padding for better mobile readability
 - Larger card sizes with rounded padding
-- Color-coded by type: Hiragana (rose), Katakana (emerald), Kanji (amber)
+- Color-coded by type: Hiragana (rose), Katakana (emerald), Kanji (amber), Combined (violet)
 - Gradient backgrounds
+- Index page vertically centered
 
 ## How to Use
 1. Open `index.html` to choose character type
