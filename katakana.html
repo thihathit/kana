@@ -33,6 +33,11 @@
         <span x-show="layout === 'grid'">Single View</span>
         <span x-show="layout === 'single'">Grid View</span>
       </button>
+      <button @click="showRomaji = !showRomaji" class="px-4 sm:px-6 py-2 rounded-lg shadow transition-colors text-sm sm:text-base"
+              :class="showRomaji ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-purple-600 hover:bg-purple-700 text-white'">
+        <span x-show="showRomaji">Romaji</span>
+        <span x-show="!showRomaji">Sound 🔊</span>
+      </button>
     </div>
 
     <div class="flex flex-wrap justify-center gap-1 sm:gap-2 mb-6">
@@ -68,8 +73,11 @@
               <span class="text-4xl sm:text-5xl text-gray-800" x-text="card.katakana"></span>
             </div>
             
-            <div class="absolute w-full h-full backface-hidden bg-emerald-500 rounded-xl shadow-lg flex items-center justify-center border-2 border-emerald-300 rotate-y-180">
-              <span class="text-2xl sm:text-3xl text-white font-semibold" x-text="card.romaji"></span>
+            <div class="absolute w-full h-full backface-hidden bg-emerald-500 rounded-xl shadow-lg flex flex-col items-center justify-center border-2 border-emerald-300 rotate-y-180 cursor-pointer"
+                 @click.stop="showRomaji ? flipCard(index) : playSoundFromCard(card)">
+              <span class="text-2xl sm:text-3xl text-white font-semibold" 
+                    x-text="showRomaji ? card.romaji : '🔊'"></span>
+              <span x-show="!showRomaji" @click.stop="flipCard(index)" class="text-2xl mt-2 text-white/70 hover:text-white cursor-pointer">🔄</span>
             </div>
             
           </div>
@@ -86,8 +94,11 @@
             <span class="text-7xl sm:text-8xl text-gray-800" x-text="currentCard?.katakana"></span>
           </div>
           
-          <div class="absolute w-full h-full backface-hidden bg-emerald-500 rounded-2xl shadow-2xl flex items-center justify-center border-4 border-emerald-300 rotate-y-180">
-            <span class="text-4xl sm:text-5xl text-white font-semibold" x-text="currentCard?.romaji"></span>
+          <div class="absolute w-full h-full backface-hidden bg-emerald-500 rounded-2xl shadow-2xl flex flex-col items-center justify-center border-4 border-emerald-300 rotate-y-180 cursor-pointer"
+               @click.stop="showRomaji ? toggleCurrentCard() : playSoundFromCard(currentCard)">
+            <span class="text-4xl sm:text-5xl text-white font-semibold" 
+                  x-text="showRomaji ? currentCard?.romaji : '🔊'"></span>
+            <span x-show="!showRomaji" @click.stop="toggleCurrentCard()" class="text-4xl mt-4 text-white/70 hover:text-white cursor-pointer">🔄</span>
           </div>
           
         </div>
@@ -154,6 +165,7 @@
         filters: { basic: true, dakuon: true, handakuon: true, youon: true },
         layout: 'grid',
         currentIndex: 0,
+        showRomaji: false,
 
         get cards() {
           return this.allCards.filter(card => this.filters[card.category]);
@@ -223,6 +235,14 @@
         flipAll() {
           const shouldFlip = !this.allFlipped;
           this.cards.forEach(card => card.flipped = shouldFlip);
+        },
+
+        playSoundFromCard(card) {
+          if (this.showRomaji || !card) return;
+          const filename = card.katakana + '.mp3';
+          const audioUrl = `google-tts/katakana/${filename}`;
+          const audio = new Audio(audioUrl);
+          audio.play().catch(err => console.log('Playback failed:', err));
         }
       };
     }
