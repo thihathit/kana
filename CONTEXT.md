@@ -97,12 +97,13 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle, Sound/Reading Toggle
 
 ## Visual Design
-- Mobile-first responsive design
+- Mobile-first responsive design using Tailwind CSS
+- Grid layout with sticky home button at bottom
 - Reduced side padding for better mobile readability
 - Larger card sizes with rounded padding
 - Color-coded by type: Hiragana (rose), Katakana (emerald), Kanji (amber), Combined (violet)
 - Gradient backgrounds
-- All pages vertically centered
+- All pages vertically centered using CSS Grid
 
 ## How to Use
 1. Open `index.html` to choose character type
