@@ -52,6 +52,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - **Text mode**: Shows romaji (hiragana/katakana) or reading (kanji), clicking card flips back to character
 - Small 🔄 flip icon at bottom center of card back in sound mode to flip back
 - Uses local pre-downloaded audio files from `google-tts/` folder (no API calls)
+- In Single View, navigating to Prev/Next automatically plays audio when sound mode is on
 
 ### 6. Category Filters
 - Toggle buttons to include/exclude character categories
@@ -112,8 +113,8 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 4. Use Flip All to reveal all answers
 5. Toggle category buttons to filter characters
 6. Use Layout toggle to switch between grid/single view
-7. In Single view, use Prev/Next buttons to navigate
-8. Toggle Sound/Romaji to switch between audio mode and text mode
+7. In Single view, use Prev/Next buttons to navigate (audio plays automatically in sound mode)
+8. Toggle Sound/Text(Romaji or Reading) to switch between audio mode and text mode
 9. In Sound mode, click card back to play audio, click 🔄 to flip back
 
 ## Future Enhancements (Potential)
