@@ -283,6 +283,9 @@
           } else {
             this.currentIndex = 0;
           }
+          if (!this.showRomaji) {
+            this.playSoundFromCard(this.currentCard);
+          }
         },
 
         prevCard() {
@@ -290,6 +293,9 @@
             this.currentIndex--;
           } else {
             this.currentIndex = this.cards.length - 1;
+          }
+          if (!this.showRomaji) {
+            this.playSoundFromCard(this.currentCard);
           }
         },
         
@@ -311,7 +317,7 @@
         },
 
         playSoundFromCard(card) {
-          if (this.showRomaji || !card) return;
+          if (!card) return;
           const folder = card.type === 'katakana' ? 'katakana' : 'hiragana';
           const filename = card.char + '.mp3';
           const audioUrl = `google-tts/${folder}/${filename}`;

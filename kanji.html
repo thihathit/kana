@@ -992,6 +992,9 @@
           } else {
             this.currentIndex = 0;
           }
+          if (!this.showRomaji) {
+            this.playSoundFromCard(this.currentCard);
+          }
         },
 
         prevCard() {
@@ -999,6 +1002,9 @@
             this.currentIndex--;
           } else {
             this.currentIndex = this.cards.length - 1;
+          }
+          if (!this.showRomaji) {
+            this.playSoundFromCard(this.currentCard);
           }
         },
         
@@ -1020,7 +1026,7 @@
         },
 
         playSoundFromCard(card) {
-          if (this.showRomaji || !card) return;
+          if (!card) return;
           const reading = card.reading;
           const filename = `${reading}.mp3`;
           const audioUrl = `google-tts/kanji/${filename}`;
