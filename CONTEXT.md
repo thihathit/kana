@@ -53,6 +53,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - Small 🔄 flip icon at bottom center of card back in sound mode to flip back
 - Uses local pre-downloaded audio files from `google-tts/` folder (no API calls)
 - In Single View, navigating to Prev/Next automatically plays audio when sound mode is on
+- Switching to sound mode in Single View also plays audio automatically
 
 ### 6. Category Filters
 - Toggle buttons to include/exclude character categories

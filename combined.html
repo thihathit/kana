@@ -33,7 +33,7 @@
         <span x-show="layout === 'grid'">Single View</span>
         <span x-show="layout === 'single'">Grid View</span>
       </button>
-      <button @click="showText = !showText" class="px-4 sm:px-6 py-2 rounded-lg shadow transition-colors text-sm sm:text-base"
+      <button @click="toggleSoundMode()" class="px-4 sm:px-6 py-2 rounded-lg shadow transition-colors text-sm sm:text-base"
               :class="showText ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-purple-600 hover:bg-purple-700 text-white'">
         <span x-show="showText">Romaji</span>
         <span x-show="!showText">Sound 🔊</span>
@@ -231,6 +231,15 @@
         currentIndex: 0,
         showText: false,
 
+        init() {
+          document.addEventListener('keydown', (e) => {
+            if (this.layout !== 'single') return;
+            if (e.key === 'ArrowLeft') this.prevCard();
+            if (e.key === 'ArrowRight') this.nextCard();
+            if (e.key === 'Enter' && !this.showText) this.playSoundFromCard(this.currentCard);
+          });
+        },
+
         get cards() {
           return this.allCards.filter(card => 
             this.filters[card.type] && this.categories[card.category]
@@ -314,6 +323,13 @@
         flipAll() {
           const shouldFlip = !this.allFlipped;
           this.cards.forEach(card => card.flipped = shouldFlip);
+        },
+
+        toggleSoundMode() {
+          this.showText = !this.showText;
+          if (!this.showText && this.layout === 'single') {
+            this.playSoundFromCard(this.currentCard);
+          }
         },
 
         playSoundFromCard(card) {
