@@ -172,7 +172,11 @@
             if (this.layout !== 'single') return;
             if (e.key === 'ArrowLeft') this.prevCard();
             if (e.key === 'ArrowRight') this.nextCard();
-            if (e.key === 'Enter' && !this.showText) this.playSoundFromCard(this.currentCard);
+            if (e.key === ' ') {
+              e.preventDefault();
+              document.activeElement.blur();
+              if (!this.showText) this.playSoundFromCard(this.currentCard);
+            }
           });
         },
 
