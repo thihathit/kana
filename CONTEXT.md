@@ -117,8 +117,8 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 7. In Single view, use Prev/Next buttons to navigate (audio plays automatically in sound mode)
 8. Toggle Sound/Text(Romaji or Reading) to switch between audio mode and text mode
 9. In Sound mode, click card back to play audio, click 🔄 to flip back
+10. In Single view, use Left/Right arrow keys to navigate, Spacebar to play audio
 
 ## Future Enhancements (Potential)
 - Add progress tracking
-- Add keyboard shortcuts
 - Add "show only incorrect" mode
