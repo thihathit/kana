@@ -79,11 +79,13 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ## Features by Application
 
 ### Combined (Hiragana + Katakana)
-- **208 characters** (104 hiragana + 104 katakana)
-- Cards color-coded: rose for hiragana, emerald for katakana
-- **Type filters**: Hiragana, Katakana
-- **Category filters**: Basic (92), Dakuon (40), Handakuon (10), Youon (66)
+- **104 character pairs** (hiragana + katakana grouped together)
+- Cards show both glyphs: hiragana (rose) and katakana (emerald) stacked vertically
+- Grid view: both glyphs displayed vertically on card front
+- Single view: both glyphs displayed side-by-side
+- **Category filters**: Basic (46), Dakuon (20), Handakuon (5), Youon (33)
 - **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle, Sound/Romaji Toggle
+- Audio uses hiragana files (both scripts share the same pronunciation)
 
 ### Hiragana & Katakana (similar features)
 - **103 characters** each with flip cards

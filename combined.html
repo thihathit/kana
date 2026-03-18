@@ -41,16 +41,6 @@
     </div>
 
     <div class="flex flex-wrap justify-center gap-1 sm:gap-2 mb-6">
-      <button @click="toggleFilter('hiragana')" 
-              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
-              :class="filters.hiragana ? 'bg-rose-600 text-white' : 'bg-gray-200 text-gray-700'">
-        Hiragana <span x-text="hiraganaCount"></span>
-      </button>
-      <button @click="toggleFilter('katakana')" 
-              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
-              :class="filters.katakana ? 'bg-emerald-600 text-white' : 'bg-gray-200 text-gray-700'">
-        Katakana <span x-text="katakanaCount"></span>
-      </button>
       <button @click="toggleCategory('basic')" 
               class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
               :class="categories.basic ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
@@ -75,22 +65,20 @@
 
     <div class="flex flex-wrap justify-center gap-2 sm:gap-3" x-show="layout === 'grid'">
       <template x-for="(card, index) in cards" :key="index">
-        <div class="perspective-1000 w-20 h-28 sm:w-32 sm:h-44 cursor-pointer" @click="flipCard(index)">
+        <div class="perspective-1000 w-20 h-32 sm:w-32 sm:h-48 cursor-pointer" @click="flipCard(index)">
           <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
                :class="card.flipped ? 'rotate-y-180' : ''">
             
-            <div class="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center border-2 border-gray-300 p-2">
-              <span class="text-4xl sm:text-5xl" 
-                    :class="card.type === 'hiragana' ? 'text-rose-500' : 'text-emerald-500'"
-                    x-text="card.char"></span>
+            <div class="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex flex-col items-center justify-center border-2 border-gray-300 p-1 gap-1 sm:gap-2">
+              <span class="text-3xl sm:text-4xl text-rose-500" x-text="card.hiragana"></span>
+              <span class="text-3xl sm:text-4xl text-emerald-500" x-text="card.katakana"></span>
             </div>
             
-            <div class="absolute w-full h-full backface-hidden rounded-xl shadow-lg flex flex-col items-center justify-center border-2 rotate-y-180 cursor-pointer"
-                 :class="card.type === 'hiragana' ? 'bg-rose-500 border-rose-300' : 'bg-emerald-500 border-emerald-300'"
+            <div class="absolute w-full h-full backface-hidden rounded-xl shadow-lg flex flex-col items-center justify-center border-2 rotate-y-180 cursor-pointer bg-gradient-to-br from-violet-500 to-purple-600 border-purple-300"
                  @click.stop="showText ? flipCard(index) : playSoundFromCard(card)">
               <span class="text-2xl sm:text-3xl text-white font-semibold" 
                     x-text="showText ? card.romaji : '🔊'"></span>
-              <span x-show="!showText" @click.stop="flipCard(index)" class="text-2xl mt-2 text-white/70 hover:text-white cursor-pointer">🔄</span>
+              <span x-show="!showText" @click.stop="flipCard(index)" class="text-xl sm:text-2xl mt-2 text-white/70 hover:text-white cursor-pointer">🔄</span>
             </div>
             
           </div>
@@ -99,22 +87,22 @@
     </div>
 
     <div x-show="layout === 'single'" x-cloak class="flex flex-col items-center">
-      <div class="perspective-1000 w-48 h-64 sm:w-64 sm:h-80 cursor-pointer mb-6" @click="toggleCurrentCard()">
+      <div class="perspective-1000 w-72 h-48 sm:w-[28rem] sm:h-64 cursor-pointer mb-6" @click="toggleCurrentCard()">
         <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
              :class="currentCard?.flipped ? 'rotate-y-180' : ''">
           
           <div class="absolute w-full h-full backface-hidden bg-white rounded-2xl shadow-2xl flex items-center justify-center border-4 border-gray-300 p-4">
-            <span class="text-7xl sm:text-8xl" 
-                  :class="currentCard?.type === 'hiragana' ? 'text-rose-500' : 'text-emerald-500'"
-                  x-text="currentCard?.char"></span>
+            <div class="flex items-center justify-center gap-4 sm:gap-8">
+              <span class="text-5xl sm:text-7xl text-rose-500" x-text="currentCard?.hiragana"></span>
+              <span class="text-5xl sm:text-7xl text-emerald-500" x-text="currentCard?.katakana"></span>
+            </div>
           </div>
           
-          <div class="absolute w-full h-full backface-hidden rounded-2xl shadow-2xl flex flex-col items-center justify-center border-4 rotate-y-180 cursor-pointer"
-               :class="currentCard?.type === 'hiragana' ? 'bg-rose-500 border-rose-300' : 'bg-emerald-500 border-emerald-300'"
+          <div class="absolute w-full h-full backface-hidden rounded-2xl shadow-2xl flex flex-col items-center justify-center border-4 rotate-y-180 cursor-pointer bg-gradient-to-br from-violet-500 to-purple-600 border-purple-300"
                @click.stop="showText ? toggleCurrentCard() : playSoundFromCard(currentCard)">
             <span class="text-4xl sm:text-5xl text-white font-semibold" 
                   x-text="showText ? currentCard?.romaji : '🔊'"></span>
-            <span x-show="!showText" @click.stop="toggleCurrentCard()" class="text-4xl mt-4 text-white/70 hover:text-white cursor-pointer">🔄</span>
+            <span x-show="!showText" @click.stop="toggleCurrentCard()" class="text-3xl sm:text-4xl mt-4 text-white/70 hover:text-white cursor-pointer">🔄</span>
           </div>
           
         </div>
@@ -135,97 +123,114 @@
   <script>
     function comboApp() {
       const comboData = [
-        // Hiragana - Basic (46)
-        { char: 'あ', romaji: 'a', type: 'hiragana', category: 'basic' }, { char: 'い', romaji: 'i', type: 'hiragana', category: 'basic' }, { char: 'う', romaji: 'u', type: 'hiragana', category: 'basic' },
-        { char: 'え', romaji: 'e', type: 'hiragana', category: 'basic' }, { char: 'お', romaji: 'o', type: 'hiragana', category: 'basic' },
-        { char: 'か', romaji: 'ka', type: 'hiragana', category: 'basic' }, { char: 'き', romaji: 'ki', type: 'hiragana', category: 'basic' }, { char: 'く', romaji: 'ku', type: 'hiragana', category: 'basic' },
-        { char: 'け', romaji: 'ke', type: 'hiragana', category: 'basic' }, { char: 'こ', romaji: 'ko', type: 'hiragana', category: 'basic' },
-        { char: 'さ', romaji: 'sa', type: 'hiragana', category: 'basic' }, { char: 'し', romaji: 'shi', type: 'hiragana', category: 'basic' }, { char: 'す', romaji: 'su', type: 'hiragana', category: 'basic' },
-        { char: 'せ', romaji: 'se', type: 'hiragana', category: 'basic' }, { char: 'そ', romaji: 'so', type: 'hiragana', category: 'basic' },
-        { char: 'た', romaji: 'ta', type: 'hiragana', category: 'basic' }, { char: 'ち', romaji: 'chi', type: 'hiragana', category: 'basic' }, { char: 'つ', romaji: 'tsu', type: 'hiragana', category: 'basic' },
-        { char: 'て', romaji: 'te', type: 'hiragana', category: 'basic' }, { char: 'と', romaji: 'to', type: 'hiragana', category: 'basic' },
-        { char: 'な', romaji: 'na', type: 'hiragana', category: 'basic' }, { char: 'に', romaji: 'ni', type: 'hiragana', category: 'basic' }, { char: 'ぬ', romaji: 'nu', type: 'hiragana', category: 'basic' },
-        { char: 'ね', romaji: 'ne', type: 'hiragana', category: 'basic' }, { char: 'の', romaji: 'no', type: 'hiragana', category: 'basic' },
-        { char: 'は', romaji: 'ha', type: 'hiragana', category: 'basic' }, { char: 'ひ', romaji: 'hi', type: 'hiragana', category: 'basic' }, { char: 'ふ', romaji: 'fu', type: 'hiragana', category: 'basic' },
-        { char: 'へ', romaji: 'he', type: 'hiragana', category: 'basic' }, { char: 'ほ', romaji: 'ho', type: 'hiragana', category: 'basic' },
-        { char: 'ま', romaji: 'ma', type: 'hiragana', category: 'basic' }, { char: 'み', romaji: 'mi', type: 'hiragana', category: 'basic' }, { char: 'む', romaji: 'mu', type: 'hiragana', category: 'basic' },
-        { char: 'め', romaji: 'me', type: 'hiragana', category: 'basic' }, { char: 'も', romaji: 'mo', type: 'hiragana', category: 'basic' },
-        { char: 'や', romaji: 'ya', type: 'hiragana', category: 'basic' }, { char: 'ゆ', romaji: 'yu', type: 'hiragana', category: 'basic' }, { char: 'よ', romaji: 'yo', type: 'hiragana', category: 'basic' },
-        { char: 'ら', romaji: 'ra', type: 'hiragana', category: 'basic' }, { char: 'り', romaji: 'ri', type: 'hiragana', category: 'basic' }, { char: 'る', romaji: 'ru', type: 'hiragana', category: 'basic' },
-        { char: 'れ', romaji: 're', type: 'hiragana', category: 'basic' }, { char: 'ろ', romaji: 'ro', type: 'hiragana', category: 'basic' }, { char: 'わ', romaji: 'wa', type: 'hiragana', category: 'basic' }, { char: 'を', romaji: 'wo', type: 'hiragana', category: 'basic' },
-        { char: 'ん', romaji: 'n', type: 'hiragana', category: 'basic' },
-        // Hiragana - Dakuon (20)
-        { char: 'が', romaji: 'ga', type: 'hiragana', category: 'dakuon' }, { char: 'ぎ', romaji: 'gi', type: 'hiragana', category: 'dakuon' }, { char: 'ぐ', romaji: 'gu', type: 'hiragana', category: 'dakuon' },
-        { char: 'げ', romaji: 'ge', type: 'hiragana', category: 'dakuon' }, { char: 'ご', romaji: 'go', type: 'hiragana', category: 'dakuon' },
-        { char: 'ざ', romaji: 'za', type: 'hiragana', category: 'dakuon' }, { char: 'じ', romaji: 'ji', type: 'hiragana', category: 'dakuon' }, { char: 'ず', romaji: 'zu', type: 'hiragana', category: 'dakuon' },
-        { char: 'ぜ', romaji: 'ze', type: 'hiragana', category: 'dakuon' }, { char: 'ぞ', romaji: 'zo', type: 'hiragana', category: 'dakuon' },
-        { char: 'だ', romaji: 'da', type: 'hiragana', category: 'dakuon' }, { char: 'ぢ', romaji: 'ji', type: 'hiragana', category: 'dakuon' }, { char: 'づ', romaji: 'zu', type: 'hiragana', category: 'dakuon' },
-        { char: 'で', romaji: 'de', type: 'hiragana', category: 'dakuon' }, { char: 'ど', romaji: 'do', type: 'hiragana', category: 'dakuon' },
-        { char: 'ば', romaji: 'ba', type: 'hiragana', category: 'dakuon' }, { char: 'び', romaji: 'bi', type: 'hiragana', category: 'dakuon' }, { char: 'ぶ', romaji: 'bu', type: 'hiragana', category: 'dakuon' },
-        { char: 'べ', romaji: 'be', type: 'hiragana', category: 'dakuon' }, { char: 'ぼ', romaji: 'bo', type: 'hiragana', category: 'dakuon' },
-        // Hiragana - Handakuon (5)
-        { char: 'ぱ', romaji: 'pa', type: 'hiragana', category: 'handakuon' }, { char: 'ぴ', romaji: 'pi', type: 'hiragana', category: 'handakuon' }, { char: 'ぷ', romaji: 'pu', type: 'hiragana', category: 'handakuon' },
-        { char: 'ぺ', romaji: 'pe', type: 'hiragana', category: 'handakuon' }, { char: 'ぽ', romaji: 'po', type: 'hiragana', category: 'handakuon' },
-        // Hiragana - Youon (33)
-        { char: 'きゃ', romaji: 'kya', type: 'hiragana', category: 'youon' }, { char: 'きゅ', romaji: 'kyu', type: 'hiragana', category: 'youon' }, { char: 'きょ', romaji: 'kyo', type: 'hiragana', category: 'youon' },
-        { char: 'しゃ', romaji: 'sha', type: 'hiragana', category: 'youon' }, { char: 'しゅ', romaji: 'shu', type: 'hiragana', category: 'youon' }, { char: 'しょ', romaji: 'sho', type: 'hiragana', category: 'youon' },
-        { char: 'ちゃ', romaji: 'cha', type: 'hiragana', category: 'youon' }, { char: 'ちゅ', romaji: 'chu', type: 'hiragana', category: 'youon' }, { char: 'ちょ', romaji: 'cho', type: 'hiragana', category: 'youon' },
-        { char: 'にゃ', romaji: 'nya', type: 'hiragana', category: 'youon' }, { char: 'にゅ', romaji: 'nyu', type: 'hiragana', category: 'youon' }, { char: 'にょ', romaji: 'nyo', type: 'hiragana', category: 'youon' },
-        { char: 'ひゃ', romaji: 'hya', type: 'hiragana', category: 'youon' }, { char: 'ひゅ', romaji: 'hyu', type: 'hiragana', category: 'youon' }, { char: 'ひょ', romaji: 'hyo', type: 'hiragana', category: 'youon' },
-        { char: 'みゃ', romaji: 'mya', type: 'hiragana', category: 'youon' }, { char: 'みゅ', romaji: 'myu', type: 'hiragana', category: 'youon' }, { char: 'みょ', romaji: 'myo', type: 'hiragana', category: 'youon' },
-        { char: 'りゃ', romaji: 'rya', type: 'hiragana', category: 'youon' }, { char: 'りゅ', romaji: 'ryu', type: 'hiragana', category: 'youon' }, { char: 'りょ', romaji: 'ryo', type: 'hiragana', category: 'youon' },
-        { char: 'ぎゃ', romaji: 'gya', type: 'hiragana', category: 'youon' }, { char: 'ぎゅ', romaji: 'gyu', type: 'hiragana', category: 'youon' }, { char: 'ぎょ', romaji: 'gyo', type: 'hiragana', category: 'youon' },
-        { char: 'じゃ', romaji: 'ja', type: 'hiragana', category: 'youon' }, { char: 'じゅ', romaji: 'ju', type: 'hiragana', category: 'youon' }, { char: 'じょ', romaji: 'jo', type: 'hiragana', category: 'youon' },
-        { char: 'びゃ', romaji: 'bya', type: 'hiragana', category: 'youon' }, { char: 'びゅ', romaji: 'byu', type: 'hiragana', category: 'youon' }, { char: 'びょ', romaji: 'byo', type: 'hiragana', category: 'youon' },
-        { char: 'ぴゃ', romaji: 'pya', type: 'hiragana', category: 'youon' }, { char: 'ぴゅ', romaji: 'pyu', type: 'hiragana', category: 'youon' }, { char: 'ぴょ', romaji: 'pyo', type: 'hiragana', category: 'youon' },
-        // Katakana - Basic (46)
-        { char: 'ア', romaji: 'a', type: 'katakana', category: 'basic' }, { char: 'イ', romaji: 'i', type: 'katakana', category: 'basic' }, { char: 'ウ', romaji: 'u', type: 'katakana', category: 'basic' },
-        { char: 'エ', romaji: 'e', type: 'katakana', category: 'basic' }, { char: 'オ', romaji: 'o', type: 'katakana', category: 'basic' },
-        { char: 'カ', romaji: 'ka', type: 'katakana', category: 'basic' }, { char: 'キ', romaji: 'ki', type: 'katakana', category: 'basic' }, { char: 'ク', romaji: 'ku', type: 'katakana', category: 'basic' },
-        { char: 'ケ', romaji: 'ke', type: 'katakana', category: 'basic' }, { char: 'コ', romaji: 'ko', type: 'katakana', category: 'basic' },
-        { char: 'サ', romaji: 'sa', type: 'katakana', category: 'basic' }, { char: 'シ', romaji: 'shi', type: 'katakana', category: 'basic' }, { char: 'ス', romaji: 'su', type: 'katakana', category: 'basic' },
-        { char: 'セ', romaji: 'se', type: 'katakana', category: 'basic' }, { char: 'ソ', romaji: 'so', type: 'katakana', category: 'basic' },
-        { char: 'タ', romaji: 'ta', type: 'katakana', category: 'basic' }, { char: 'チ', romaji: 'chi', type: 'katakana', category: 'basic' }, { char: 'ツ', romaji: 'tsu', type: 'katakana', category: 'basic' },
-        { char: 'テ', romaji: 'te', type: 'katakana', category: 'basic' }, { char: 'ト', romaji: 'to', type: 'katakana', category: 'basic' },
-        { char: 'ナ', romaji: 'na', type: 'katakana', category: 'basic' }, { char: 'ニ', romaji: 'ni', type: 'katakana', category: 'basic' }, { char: 'ヌ', romaji: 'nu', type: 'katakana', category: 'basic' },
-        { char: 'ネ', romaji: 'ne', type: 'katakana', category: 'basic' }, { char: 'ノ', romaji: 'no', type: 'katakana', category: 'basic' },
-        { char: 'ハ', romaji: 'ha', type: 'katakana', category: 'basic' }, { char: 'ヒ', romaji: 'hi', type: 'katakana', category: 'basic' }, { char: 'フ', romaji: 'fu', type: 'katakana', category: 'basic' },
-        { char: 'ヘ', romaji: 'he', type: 'katakana', category: 'basic' }, { char: 'ホ', romaji: 'ho', type: 'katakana', category: 'basic' },
-        { char: 'マ', romaji: 'ma', type: 'katakana', category: 'basic' }, { char: 'ミ', romaji: 'mi', type: 'katakana', category: 'basic' }, { char: 'ム', romaji: 'mu', type: 'katakana', category: 'basic' },
-        { char: 'メ', romaji: 'me', type: 'katakana', category: 'basic' }, { char: 'モ', romaji: 'mo', type: 'katakana', category: 'basic' },
-        { char: 'ヤ', romaji: 'ya', type: 'katakana', category: 'basic' }, { char: 'ユ', romaji: 'yu', type: 'katakana', category: 'basic' }, { char: 'ヨ', romaji: 'yo', type: 'katakana', category: 'basic' },
-        { char: 'ラ', romaji: 'ra', type: 'katakana', category: 'basic' }, { char: 'リ', romaji: 'ri', type: 'katakana', category: 'basic' }, { char: 'ル', romaji: 'ru', type: 'katakana', category: 'basic' },
-        { char: 'レ', romaji: 're', type: 'katakana', category: 'basic' }, { char: 'ロ', romaji: 'ro', type: 'katakana', category: 'basic' }, { char: 'ワ', romaji: 'wa', type: 'katakana', category: 'basic' }, { char: 'ヲ', romaji: 'wo', type: 'katakana', category: 'basic' },
-        { char: 'ン', romaji: 'n', type: 'katakana', category: 'basic' },
-        // Katakana - Dakuon (20)
-        { char: 'ガ', romaji: 'ga', type: 'katakana', category: 'dakuon' }, { char: 'ギ', romaji: 'gi', type: 'katakana', category: 'dakuon' }, { char: 'グ', romaji: 'gu', type: 'katakana', category: 'dakuon' },
-        { char: 'ゲ', romaji: 'ge', type: 'katakana', category: 'dakuon' }, { char: 'ゴ', romaji: 'go', type: 'katakana', category: 'dakuon' },
-        { char: 'ザ', romaji: 'za', type: 'katakana', category: 'dakuon' }, { char: 'ジ', romaji: 'ji', type: 'katakana', category: 'dakuon' }, { char: 'ズ', romaji: 'zu', type: 'katakana', category: 'dakuon' },
-        { char: 'ゼ', romaji: 'ze', type: 'katakana', category: 'dakuon' }, { char: 'ゾ', romaji: 'zo', type: 'katakana', category: 'dakuon' },
-        { char: 'ダ', romaji: 'da', type: 'katakana', category: 'dakuon' }, { char: 'ヂ', romaji: 'ji', type: 'katakana', category: 'dakuon' }, { char: 'ヅ', romaji: 'zu', type: 'katakana', category: 'dakuon' },
-        { char: 'デ', romaji: 'de', type: 'katakana', category: 'dakuon' }, { char: 'ド', romaji: 'do', type: 'katakana', category: 'dakuon' },
-        { char: 'バ', romaji: 'ba', type: 'katakana', category: 'dakuon' }, { char: 'ビ', romaji: 'bi', type: 'katakana', category: 'dakuon' }, { char: 'ブ', romaji: 'bu', type: 'katakana', category: 'dakuon' },
-        { char: 'ベ', romaji: 'be', type: 'katakana', category: 'dakuon' }, { char: 'ボ', romaji: 'bo', type: 'katakana', category: 'dakuon' },
-        // Katakana - Handakuon (5)
-        { char: 'パ', romaji: 'pa', type: 'katakana', category: 'handakuon' }, { char: 'ピ', romaji: 'pi', type: 'katakana', category: 'handakuon' }, { char: 'プ', romaji: 'pu', type: 'katakana', category: 'handakuon' },
-        { char: 'ペ', romaji: 'pe', type: 'katakana', category: 'handakuon' }, { char: 'ポ', romaji: 'po', type: 'katakana', category: 'handakuon' },
-        // Katakana - Youon (33)
-        { char: 'キャ', romaji: 'kya', type: 'katakana', category: 'youon' }, { char: 'キュ', romaji: 'kyu', type: 'katakana', category: 'youon' }, { char: 'キョ', romaji: 'kyo', type: 'katakana', category: 'youon' },
-        { char: 'シャ', romaji: 'sha', type: 'katakana', category: 'youon' }, { char: 'シュ', romaji: 'shu', type: 'katakana', category: 'youon' }, { char: 'ショ', romaji: 'sho', type: 'katakana', category: 'youon' },
-        { char: 'チャ', romaji: 'cha', type: 'katakana', category: 'youon' }, { char: 'チュ', romaji: 'chu', type: 'katakana', category: 'youon' }, { char: 'チョ', romaji: 'cho', type: 'katakana', category: 'youon' },
-        { char: 'ニャ', romaji: 'nya', type: 'katakana', category: 'youon' }, { char: 'ニュ', romaji: 'nyu', type: 'katakana', category: 'youon' }, { char: 'ニョ', romaji: 'nyo', type: 'katakana', category: 'youon' },
-        { char: 'ヒャ', romaji: 'hya', type: 'katakana', category: 'youon' }, { char: 'ヒュ', romaji: 'hyu', type: 'katakana', category: 'youon' }, { char: 'ヒョ', romaji: 'hyo', type: 'katakana', category: 'youon' },
-        { char: 'ミャ', romaji: 'mya', type: 'katakana', category: 'youon' }, { char: 'ミュ', romaji: 'myu', type: 'katakana', category: 'youon' }, { char: 'ミョ', romaji: 'myo', type: 'katakana', category: 'youon' },
-        { char: 'リャ', romaji: 'rya', type: 'katakana', category: 'youon' }, { char: 'リュ', romaji: 'ryu', type: 'katakana', category: 'youon' }, { char: 'リョ', romaji: 'ryo', type: 'katakana', category: 'youon' },
-        { char: 'ギャ', romaji: 'gya', type: 'katakana', category: 'youon' }, { char: 'ギュ', romaji: 'gyu', type: 'katakana', category: 'youon' }, { char: 'ギョ', romaji: 'gyo', type: 'katakana', category: 'youon' },
-        { char: 'ジャ', romaji: 'ja', type: 'katakana', category: 'youon' }, { char: 'ジュ', romaji: 'ju', type: 'katakana', category: 'youon' }, { char: 'ジョ', romaji: 'jo', type: 'katakana', category: 'youon' },
-        { char: 'ビャ', romaji: 'bya', type: 'katakana', category: 'youon' }, { char: 'ビュ', romaji: 'byu', type: 'katakana', category: 'youon' }, { char: 'ビョ', romaji: 'byo', type: 'katakana', category: 'youon' },
-        { char: 'ピャ', romaji: 'pya', type: 'katakana', category: 'youon' }, { char: 'ピュ', romaji: 'pyu', type: 'katakana', category: 'youon' }, { char: 'ピョ', romaji: 'pyo', type: 'katakana', category: 'youon' }
+        { id: 'a', romaji: 'a', category: 'basic', hiragana: 'あ', katakana: 'ア' },
+        { id: 'i', romaji: 'i', category: 'basic', hiragana: 'い', katakana: 'イ' },
+        { id: 'u', romaji: 'u', category: 'basic', hiragana: 'う', katakana: 'ウ' },
+        { id: 'e', romaji: 'e', category: 'basic', hiragana: 'え', katakana: 'エ' },
+        { id: 'o', romaji: 'o', category: 'basic', hiragana: 'お', katakana: 'オ' },
+        { id: 'ka', romaji: 'ka', category: 'basic', hiragana: 'か', katakana: 'カ' },
+        { id: 'ki', romaji: 'ki', category: 'basic', hiragana: 'き', katakana: 'キ' },
+        { id: 'ku', romaji: 'ku', category: 'basic', hiragana: 'く', katakana: 'ク' },
+        { id: 'ke', romaji: 'ke', category: 'basic', hiragana: 'け', katakana: 'ケ' },
+        { id: 'ko', romaji: 'ko', category: 'basic', hiragana: 'こ', katakana: 'コ' },
+        { id: 'sa', romaji: 'sa', category: 'basic', hiragana: 'さ', katakana: 'サ' },
+        { id: 'shi', romaji: 'shi', category: 'basic', hiragana: 'し', katakana: 'シ' },
+        { id: 'su', romaji: 'su', category: 'basic', hiragana: 'す', katakana: 'ス' },
+        { id: 'se', romaji: 'se', category: 'basic', hiragana: 'せ', katakana: 'セ' },
+        { id: 'so', romaji: 'so', category: 'basic', hiragana: 'そ', katakana: 'ソ' },
+        { id: 'ta', romaji: 'ta', category: 'basic', hiragana: 'た', katakana: 'タ' },
+        { id: 'chi', romaji: 'chi', category: 'basic', hiragana: 'ち', katakana: 'チ' },
+        { id: 'tsu', romaji: 'tsu', category: 'basic', hiragana: 'つ', katakana: 'ツ' },
+        { id: 'te', romaji: 'te', category: 'basic', hiragana: 'て', katakana: 'テ' },
+        { id: 'to', romaji: 'to', category: 'basic', hiragana: 'と', katakana: 'ト' },
+        { id: 'na', romaji: 'na', category: 'basic', hiragana: 'な', katakana: 'ナ' },
+        { id: 'ni', romaji: 'ni', category: 'basic', hiragana: 'に', katakana: 'ニ' },
+        { id: 'nu', romaji: 'nu', category: 'basic', hiragana: 'ぬ', katakana: 'ヌ' },
+        { id: 'ne', romaji: 'ne', category: 'basic', hiragana: 'ね', katakana: 'ネ' },
+        { id: 'no', romaji: 'no', category: 'basic', hiragana: 'の', katakana: 'ノ' },
+        { id: 'ha', romaji: 'ha', category: 'basic', hiragana: 'は', katakana: 'ハ' },
+        { id: 'hi', romaji: 'hi', category: 'basic', hiragana: 'ひ', katakana: 'ヒ' },
+        { id: 'fu', romaji: 'fu', category: 'basic', hiragana: 'ふ', katakana: 'フ' },
+        { id: 'he', romaji: 'he', category: 'basic', hiragana: 'へ', katakana: 'ヘ' },
+        { id: 'ho', romaji: 'ho', category: 'basic', hiragana: 'ほ', katakana: 'ホ' },
+        { id: 'ma', romaji: 'ma', category: 'basic', hiragana: 'ま', katakana: 'マ' },
+        { id: 'mi', romaji: 'mi', category: 'basic', hiragana: 'み', katakana: 'ミ' },
+        { id: 'mu', romaji: 'mu', category: 'basic', hiragana: 'む', katakana: 'ム' },
+        { id: 'me', romaji: 'me', category: 'basic', hiragana: 'め', katakana: 'メ' },
+        { id: 'mo', romaji: 'mo', category: 'basic', hiragana: 'も', katakana: 'モ' },
+        { id: 'ya', romaji: 'ya', category: 'basic', hiragana: 'や', katakana: 'ヤ' },
+        { id: 'yu', romaji: 'yu', category: 'basic', hiragana: 'ゆ', katakana: 'ユ' },
+        { id: 'yo', romaji: 'yo', category: 'basic', hiragana: 'よ', katakana: 'ヨ' },
+        { id: 'ra', romaji: 'ra', category: 'basic', hiragana: 'ら', katakana: 'ラ' },
+        { id: 'ri', romaji: 'ri', category: 'basic', hiragana: 'り', katakana: 'リ' },
+        { id: 'ru', romaji: 'ru', category: 'basic', hiragana: 'る', katakana: 'ル' },
+        { id: 're', romaji: 're', category: 'basic', hiragana: 'れ', katakana: 'レ' },
+        { id: 'ro', romaji: 'ro', category: 'basic', hiragana: 'ろ', katakana: 'ロ' },
+        { id: 'wa', romaji: 'wa', category: 'basic', hiragana: 'わ', katakana: 'ワ' },
+        { id: 'wo', romaji: 'wo', category: 'basic', hiragana: 'を', katakana: 'ヲ' },
+        { id: 'n', romaji: 'n', category: 'basic', hiragana: 'ん', katakana: 'ン' },
+        { id: 'ga', romaji: 'ga', category: 'dakuon', hiragana: 'が', katakana: 'ガ' },
+        { id: 'gi', romaji: 'gi', category: 'dakuon', hiragana: 'ぎ', katakana: 'ギ' },
+        { id: 'gu', romaji: 'gu', category: 'dakuon', hiragana: 'ぐ', katakana: 'グ' },
+        { id: 'ge', romaji: 'ge', category: 'dakuon', hiragana: 'げ', katakana: 'ゲ' },
+        { id: 'go', romaji: 'go', category: 'dakuon', hiragana: 'ご', katakana: 'ゴ' },
+        { id: 'za', romaji: 'za', category: 'dakuon', hiragana: 'ざ', katakana: 'ザ' },
+        { id: 'ji', romaji: 'ji', category: 'dakuon', hiragana: 'じ', katakana: 'ジ' },
+        { id: 'zu', romaji: 'zu', category: 'dakuon', hiragana: 'ず', katakana: 'ズ' },
+        { id: 'ze', romaji: 'ze', category: 'dakuon', hiragana: 'ぜ', katakana: 'ゼ' },
+        { id: 'zo', romaji: 'zo', category: 'dakuon', hiragana: 'ぞ', katakana: 'ゾ' },
+        { id: 'da', romaji: 'da', category: 'dakuon', hiragana: 'だ', katakana: 'ダ' },
+        { id: 'di', romaji: 'di', category: 'dakuon', hiragana: 'ぢ', katakana: 'ヂ' },
+        { id: 'du', romaji: 'du', category: 'dakuon', hiragana: 'づ', katakana: 'ヅ' },
+        { id: 'de', romaji: 'de', category: 'dakuon', hiragana: 'で', katakana: 'デ' },
+        { id: 'do', romaji: 'do', category: 'dakuon', hiragana: 'ど', katakana: 'ド' },
+        { id: 'ba', romaji: 'ba', category: 'dakuon', hiragana: 'ば', katakana: 'バ' },
+        { id: 'bi', romaji: 'bi', category: 'dakuon', hiragana: 'び', katakana: 'ビ' },
+        { id: 'bu', romaji: 'bu', category: 'dakuon', hiragana: 'ぶ', katakana: 'ブ' },
+        { id: 'be', romaji: 'be', category: 'dakuon', hiragana: 'べ', katakana: 'ベ' },
+        { id: 'bo', romaji: 'bo', category: 'dakuon', hiragana: 'ぼ', katakana: 'ボ' },
+        { id: 'pa', romaji: 'pa', category: 'handakuon', hiragana: 'ぱ', katakana: 'パ' },
+        { id: 'pi', romaji: 'pi', category: 'handakuon', hiragana: 'ぴ', katakana: 'ピ' },
+        { id: 'pu', romaji: 'pu', category: 'handakuon', hiragana: 'ぷ', katakana: 'プ' },
+        { id: 'pe', romaji: 'pe', category: 'handakuon', hiragana: 'ぺ', katakana: 'ペ' },
+        { id: 'po', romaji: 'po', category: 'handakuon', hiragana: 'ぽ', katakana: 'ポ' },
+        { id: 'kya', romaji: 'kya', category: 'youon', hiragana: 'きゃ', katakana: 'キャ' },
+        { id: 'kyu', romaji: 'kyu', category: 'youon', hiragana: 'きゅ', katakana: 'キュ' },
+        { id: 'kyo', romaji: 'kyo', category: 'youon', hiragana: 'きょ', katakana: 'キョ' },
+        { id: 'sha', romaji: 'sha', category: 'youon', hiragana: 'しゃ', katakana: 'シャ' },
+        { id: 'shu', romaji: 'shu', category: 'youon', hiragana: 'しゅ', katakana: 'シュ' },
+        { id: 'sho', romaji: 'sho', category: 'youon', hiragana: 'しょ', katakana: 'ショ' },
+        { id: 'cha', romaji: 'cha', category: 'youon', hiragana: 'ちゃ', katakana: 'チャ' },
+        { id: 'chu', romaji: 'chu', category: 'youon', hiragana: 'ちゅ', katakana: 'チュ' },
+        { id: 'cho', romaji: 'cho', category: 'youon', hiragana: 'ちょ', katakana: 'チョ' },
+        { id: 'nya', romaji: 'nya', category: 'youon', hiragana: 'にゃ', katakana: 'ニャ' },
+        { id: 'nyu', romaji: 'nyu', category: 'youon', hiragana: 'にゅ', katakana: 'ニュ' },
+        { id: 'nyo', romaji: 'nyo', category: 'youon', hiragana: 'にょ', katakana: 'ニョ' },
+        { id: 'hya', romaji: 'hya', category: 'youon', hiragana: 'ひゃ', katakana: 'ヒャ' },
+        { id: 'hyu', romaji: 'hyu', category: 'youon', hiragana: 'ひゅ', katakana: 'ヒュ' },
+        { id: 'hyo', romaji: 'hyo', category: 'youon', hiragana: 'ひょ', katakana: 'ヒョ' },
+        { id: 'mya', romaji: 'mya', category: 'youon', hiragana: 'みゃ', katakana: 'ミャ' },
+        { id: 'myu', romaji: 'myu', category: 'youon', hiragana: 'みゅ', katakana: 'ミュ' },
+        { id: 'myo', romaji: 'myo', category: 'youon', hiragana: 'みょ', katakana: 'ミョ' },
+        { id: 'rya', romaji: 'rya', category: 'youon', hiragana: 'りゃ', katakana: 'リャ' },
+        { id: 'ryu', romaji: 'ryu', category: 'youon', hiragana: 'りゅ', katakana: 'リュ' },
+        { id: 'ryo', romaji: 'ryo', category: 'youon', hiragana: 'りょ', katakana: 'リョ' },
+        { id: 'gya', romaji: 'gya', category: 'youon', hiragana: 'ぎゃ', katakana: 'ギャ' },
+        { id: 'gyu', romaji: 'gyu', category: 'youon', hiragana: 'ぎゅ', katakana: 'ギュ' },
+        { id: 'gyo', romaji: 'gyo', category: 'youon', hiragana: 'ぎょ', katakana: 'ギョ' },
+        { id: 'ja', romaji: 'ja', category: 'youon', hiragana: 'じゃ', katakana: 'ジャ' },
+        { id: 'ju', romaji: 'ju', category: 'youon', hiragana: 'じゅ', katakana: 'ジュ' },
+        { id: 'jo', romaji: 'jo', category: 'youon', hiragana: 'じょ', katakana: 'ジョ' },
+        { id: 'bya', romaji: 'bya', category: 'youon', hiragana: 'びゃ', katakana: 'ビャ' },
+        { id: 'byu', romaji: 'byu', category: 'youon', hiragana: 'びゅ', katakana: 'ビュ' },
+        { id: 'byo', romaji: 'byo', category: 'youon', hiragana: 'びょ', katakana: 'ビョ' },
+        { id: 'pya', romaji: 'pya', category: 'youon', hiragana: 'ぴゃ', katakana: 'ピャ' },
+        { id: 'pyu', romaji: 'pyu', category: 'youon', hiragana: 'ぴゅ', katakana: 'ピュ' },
+        { id: 'pyo', romaji: 'pyo', category: 'youon', hiragana: 'ぴょ', katakana: 'ピョ' }
       ];
 
       return {
         allCards: comboData.map(item => ({ ...item, flipped: false })),
-        filters: { hiragana: true, katakana: true },
         categories: { basic: true, dakuon: true, handakuon: true, youon: true },
         layout: 'grid',
         currentIndex: 0,
@@ -245,17 +250,13 @@
         },
 
         get cards() {
-          return this.allCards.filter(card => 
-            this.filters[card.type] && this.categories[card.category]
-          );
+          return this.allCards.filter(card => this.categories[card.category]);
         },
 
         get currentCard() {
           return this.cards[this.currentIndex] || null;
         },
 
-        get hiraganaCount() { return this.allCards.filter(c => c.type === 'hiragana').length; },
-        get katakanaCount() { return this.allCards.filter(c => c.type === 'katakana').length; },
         get basicCount() { return this.allCards.filter(c => c.category === 'basic').length; },
         get dakuonCount() { return this.allCards.filter(c => c.category === 'dakuon').length; },
         get handakuonCount() { return this.allCards.filter(c => c.category === 'handakuon').length; },
@@ -267,11 +268,6 @@
         
         get allFlipped() {
           return this.flippedCount === this.cards.length;
-        },
-
-        toggleFilter(filter) {
-          this.filters[filter] = !this.filters[filter];
-          this.currentIndex = 0;
         },
 
         toggleCategory(category) {
@@ -338,9 +334,8 @@
 
         playSoundFromCard(card) {
           if (!card) return;
-          const folder = card.type === 'katakana' ? 'katakana' : 'hiragana';
-          const filename = card.char + '.mp3';
-          const audioUrl = `google-tts/${folder}/${filename}`;
+          const filename = card.hiragana + '.mp3';
+          const audioUrl = `google-tts/hiragana/${filename}`;
           const audio = new Audio(audioUrl);
           audio.play().catch(err => console.log('Playback failed:', err));
         }
