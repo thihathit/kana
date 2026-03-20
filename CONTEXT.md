@@ -68,6 +68,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ├── katakana.html       # Katakana flashcard application
 ├── combined.html       # Combined Hiragana + Katakana
 ├── kanji.html          # Kanji flashcard application (JLPT N5-N1)
+├── lookalike.html      # Lookalike kanas - distinguish similar characters
 ├── download_audio.py   # Script to refresh audio files
 ├── google-tts/        # Local audio files (run `download_audio.py` to refresh)
 │   ├── hiragana/       # 104 hiragana audio files
@@ -100,12 +101,20 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - Card back shows reading + meaning
 - **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle, Sound/Reading Toggle
 
+### Lookalike Kanas
+- **28 lookalike pairs** of confusing character pairs
+- Cards show 2 similar characters on front, answers + tips on back
+- Cards include pairs with different sounds (hiragana-hiragana, katakana-katakana, hiragana-katakana cross)
+- **Buttons**: Shuffle, Reveal/Hide All, Layout Toggle
+- Tips on card back explain the differences between characters
+- Marked as BETA
+
 ## Visual Design
 - Mobile-first responsive design using Tailwind CSS
 - Grid layout with sticky home button at bottom
 - Reduced side padding for better mobile readability
 - Larger card sizes with rounded padding
-- Color-coded by type: Hiragana (rose), Katakana (emerald), Kanji (amber), Combined (violet)
+- Color-coded by type: Hiragana (rose), Katakana (emerald), Kanji (amber), Combined (violet), Lookalike (orange)
 - Gradient backgrounds
 - All pages vertically centered using CSS Grid
 
@@ -114,10 +123,10 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 2. Click cards to flip between character and answer
 3. Use Shuffle to randomize order
 4. Use Flip All to reveal all answers
-5. Toggle category buttons to filter characters
+5. Toggle category buttons to filter characters (not available on Lookalikes)
 6. Use Layout toggle to switch between grid/single view
 7. In Single view, use Prev/Next buttons to navigate (audio plays automatically in sound mode)
-8. Toggle Sound/Text(Romaji or Reading) to switch between audio mode and text mode
+8. Toggle Sound/Text(Romaji or Reading) to switch between audio mode and text mode (not available on Lookalikes)
 9. In Sound mode, click card back to play audio, click 🔄 to flip back
 10. In Single view, use Left/Right arrow keys to navigate, Spacebar to play audio
 
