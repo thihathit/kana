@@ -54,6 +54,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - Uses local pre-downloaded audio files from `google-tts/` folder (no API calls)
 - In Single View, navigating to Prev/Next automatically plays audio when sound mode is on
 - Switching to sound mode in Single View also plays audio automatically
+- **Listen button** in Single View: 🔊 Listen button appears between Prev/Next controls (only in sound mode)
 
 ### 6. Category Filters
 - Toggle buttons to include/exclude character categories
@@ -125,7 +126,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 4. Use Flip All to reveal all answers
 5. Toggle category buttons to filter characters (not available on Lookalikes)
 6. Use Layout toggle to switch between grid/single view
-7. In Single view, use Prev/Next buttons to navigate (audio plays automatically in sound mode)
+7. In Single view, use Prev/Next buttons to navigate (audio plays automatically in sound mode). Use the 🔊 Listen button to replay audio anytime.
 8. Toggle Sound/Text(Romaji or Reading) to switch between audio mode and text mode (not available on Lookalikes)
 9. In Sound mode, click card back to play audio, click 🔄 to flip back
 10. In Single view, use Left/Right arrow keys to navigate, Spacebar to play audio
