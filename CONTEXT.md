@@ -70,8 +70,9 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ├── combined.html       # Combined Hiragana + Katakana
 ├── kanji.html          # Kanji flashcard application (JLPT N5-N1)
 ├── lookalike.html      # Lookalike kanas - distinguish similar characters
-├── download_audio.py   # Script to refresh audio files
-├── google-tts/        # Local audio files (run `download_audio.py` to refresh)
+├── download_from_google.py    # Script to refresh audio files using Google TTS
+├── character_lists.py         # Shared character lists for download scripts
+├── google-tts/        # Local audio files (run download scripts to refresh)
 │   ├── hiragana/       # 104 hiragana audio files
 │   ├── katakana/       # 104 katakana audio files
 │   └── kanji/          # 661 kanji reading audio files

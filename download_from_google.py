@@ -3,6 +3,9 @@ import os
 import subprocess
 import urllib.parse
 
+# Import character lists from the shared module
+from character_lists import hiragana_list, katakana_list, kanji_list
+
 
 def download_audio(text, filepath):
     url = f"https://translate.google.com/translate_tts?ie=UTF-8&q={urllib.parse.quote(text)}&tl=ja&client=tw-ob"
@@ -20,112 +23,34 @@ os.makedirs("google-tts/hiragana", exist_ok=True)
 os.makedirs("google-tts/katakana", exist_ok=True)
 os.makedirs("google-tts/kanji", exist_ok=True)
 
-hiragana_list = [
-    "あ",
-    "い",
-    "う",
-    "え",
-    "お",
-    "か",
-    "き",
-    "く",
-    "け",
-    "こ",
-    "さ",
-    "し",
-    "す",
-    "せ",
-    "そ",
-    "た",
-    "ち",
-    "つ",
-    "て",
-    "と",
-    "な",
-    "に",
-    "ぬ",
-    "ね",
-    "の",
-    "は",
-    "ひ",
-    "ふ",
-    "へ",
-    "ほ",
-    "ま",
-    "み",
-    "む",
-    "め",
-    "も",
-    "や",
-    "ゆ",
-    "よ",
-    "ら",
-    "り",
-    "る",
-    "れ",
-    "ろ",
-    "わ",
-    "を",
-    "ん",
-    "が",
-    "ぎ",
-    "ぐ",
-    "げ",
-    "ご",
-    "ざ",
-    "じ",
-    "ず",
-    "ぜ",
-    "ぞ",
-    "だ",
-    "ぢ",
-    "づ",
-    "で",
-    "ど",
-    "ば",
-    "び",
-    "ぶ",
-    "べ",
-    "ぼ",
-    "ぱ",
-    "ぴ",
-    "ぷ",
-    "ぺ",
-    "ぽ",
-    "きゃ",
-    "きゅ",
-    "きょ",
-    "しゃ",
-    "しゅ",
-    "しょ",
-    "ちゃ",
-    "ちゅ",
-    "ちょ",
-    "にゃ",
-    "にゅ",
-    "にょ",
-    "ひゃ",
-    "ひゅ",
-    "ひょ",
-    "みゃ",
-    "みゅ",
-    "みょ",
-    "りゃ",
-    "りゅ",
-    "りょ",
-    "ぎゃ",
-    "ぎゅ",
-    "ぎょ",
-    "じゃ",
-    "じゅ",
-    "じょ",
-    "びゃ",
-    "びゅ",
-    "びょ",
-    "ぴゃ",
-    "ぴゅ",
-    "ぴょ",
-]
+print("Downloading hiragana...")
+count = 0
+for h in hiragana_list:
+    filepath = f"google-tts/hiragana/{h}.mp3"
+    if not os.path.exists(filepath):
+        download_audio(h, filepath)
+        count += 1
+print(f"Done hiragana: {count} new (total {len(hiragana_list)})")
+
+print("Downloading katakana...")
+count = 0
+for k in katakana_list:
+    filepath = f"google-tts/katakana/{k}.mp3"
+    if not os.path.exists(filepath):
+        download_audio(k, filepath)
+        count += 1
+print(f"Done katakana: {count} new (total {len(katakana_list)})")
+
+print("Downloading kanji...")
+count = 0
+unique_list = list(set(kanji_list))
+for kj in unique_list:
+    filepath = f"google-tts/kanji/{kj}.mp3"
+    if not os.path.exists(filepath):
+        print(f"Downloading {kj}...")
+        download_audio(kj, filepath)
+        count += 1
+print(f"Done kanji: {count} new (total {len(unique_list)})")
 
 katakana_list = [
     "ア",
