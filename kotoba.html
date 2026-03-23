@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kotoba Flashcards</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    .perspective-1000 { perspective: 1000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-cyan-50 to-teal-100 min-h-screen grid grid-rows-[1fr_auto]" x-data="kotobaApp()">
+  <div class="container mx-auto px-2 py-6 sm:px-4 sm:py-8 w-full flex flex-col justify-center">
+    <div class="text-center mb-6 sm:mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
+        Kotoba Flashcards
+        <span class="text-xs px-2 py-1 bg-yellow-400 text-yellow-800 rounded-full font-bold">BETA</span>
+      </h1>
+      <p class="text-gray-600 text-sm sm:text-base">Click a card to flip • <span x-text="flippedCount"></span> / <span x-text="cards.length"></span> flipped</p>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6">
+      <button @click="shuffle()" class="px-4 sm:px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
+        Shuffle
+      </button>
+      <button @click="flipAll()" class="px-4 sm:px-6 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
+        <span x-show="!allFlipped">Flip All</span>
+        <span x-show="allFlipped">Unflip All</span>
+      </button>
+      <button @click="layout = layout === 'grid' ? 'single' : 'grid'" class="px-4 sm:px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
+        <span x-show="layout === 'grid'">Single View</span>
+        <span x-show="layout === 'single'">Grid View</span>
+      </button>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-1 sm:gap-2 mb-6">
+      <button @click="toggleFilter('n5')" 
+              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
+              :class="filters.n5 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        N5 <span x-text="n5Count"></span>
+      </button>
+      <button @click="toggleFilter('n4')" 
+              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
+              :class="filters.n4 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        N4 <span x-text="n4Count"></span>
+      </button>
+      <button @click="toggleFilter('n3')" 
+              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
+              :class="filters.n3 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        N3 <span x-text="n3Count"></span>
+      </button>
+      <button @click="toggleFilter('n2')" 
+              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
+              :class="filters.n2 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        N2 <span x-text="n2Count"></span>
+      </button>
+      <button @click="toggleFilter('n1')" 
+              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
+              :class="filters.n1 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+        N1 <span x-text="n1Count"></span>
+      </button>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-3 sm:gap-4" x-show="layout === 'grid'">
+      <template x-for="(card, index) in cards" :key="index">
+        <div class="perspective-1000 w-36 h-44 sm:w-48 sm:h-56 cursor-pointer" @click="flipCard(index)">
+          <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
+               :class="card.flipped ? 'rotate-y-180' : ''">
+            
+            <div class="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex flex-col items-center justify-center border-2 border-gray-300 p-2 sm:p-3">
+              <span class="text-xl sm:text-2xl text-gray-800 text-center leading-tight" x-text="card.word"></span>
+              <span class="text-xs text-gray-400 mt-2 uppercase" x-text="card.category"></span>
+            </div>
+            
+            <div class="absolute w-full h-full backface-hidden bg-cyan-500 rounded-xl shadow-lg flex flex-col items-center justify-center border-2 border-cyan-300 rotate-y-180 p-2 sm:p-3">
+              <span class="text-lg sm:text-xl text-white font-semibold text-center leading-tight" x-text="card.reading"></span>
+              <span class="text-sm sm:text-base text-cyan-100 mt-2 text-center" x-text="card.meaning"></span>
+            </div>
+            
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <div x-show="layout === 'single'" x-cloak class="flex flex-col items-center">
+      <div class="perspective-1000 w-full max-w-md cursor-pointer mb-6" @click="toggleCurrentCard()">
+        <div class="transform-style-3d w-full h-48 sm:h-56 relative transition-transform duration-300" 
+             :class="currentCard?.flipped ? 'rotate-y-180' : ''">
+          
+          <div class="absolute w-full h-full backface-hidden bg-white rounded-2xl shadow-2xl flex flex-col items-center justify-center border-4 border-gray-300 p-4 sm:p-6">
+            <span class="text-4xl sm:text-5xl text-gray-800 text-center leading-tight" x-text="currentCard?.word"></span>
+            <span class="text-sm text-gray-400 mt-4 uppercase" x-text="currentCard?.category"></span>
+          </div>
+          
+          <div class="absolute w-full h-full backface-hidden bg-cyan-500 rounded-2xl shadow-2xl flex flex-col items-center justify-center border-4 border-cyan-300 rotate-y-180 p-4 sm:p-6">
+            <span class="text-2xl sm:text-3xl text-white font-semibold text-center leading-tight" x-text="currentCard?.reading"></span>
+            <span class="text-base sm:text-lg text-cyan-100 mt-3 text-center" x-text="currentCard?.meaning"></span>
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="flex flex-col items-center gap-2">
+        <div class="flex items-center gap-4">
+          <button @click="prevCard()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition-colors text-lg">
+            ← Prev
+          </button>
+          <button @click="nextCard()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition-colors text-lg">
+            Next →
+          </button>
+        </div>
+        <span class="text-gray-600 font-medium" x-text="(currentIndex + 1) + ' / ' + cards.length"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function kotobaApp() {
+      const kotobaData = [
+        { word: '私', reading: 'わたし', meaning: 'I / me', category: 'n5' },
+        { word: 'あなた', reading: 'あなた', meaning: 'you', category: 'n5' },
+        { word: '人', reading: 'ひと', meaning: 'person', category: 'n5' },
+        { word: '友達', reading: 'ともだち', meaning: 'friend', category: 'n5' },
+        { word: '家族', reading: 'かぞく', meaning: 'family', category: 'n5' },
+        { word: '父', reading: 'ちち', meaning: 'father', category: 'n5' },
+        { word: '母', reading: 'はは', meaning: 'mother', category: 'n5' },
+        { word: '先生', reading: 'せんせい', meaning: 'teacher', category: 'n5' },
+        { word: '学生', reading: 'がくせい', meaning: 'student', category: 'n5' },
+        { word: '学校', reading: 'がっこう', meaning: 'school', category: 'n5' },
+        { word: '大学', reading: 'だいがく', meaning: 'university', category: 'n5' },
+        { word: '会社', reading: 'かいしゃ', meaning: 'company', category: 'n5' },
+        { word: '病院', reading: 'びょういん', meaning: 'hospital', category: 'n5' },
+        { word: '駅', reading: 'えき', meaning: 'station', category: 'n5' },
+        { word: '電話', reading: 'でんわ', meaning: 'telephone', category: 'n5' },
+        { word: '本', reading: 'ほん', meaning: 'book', category: 'n5' },
+        { word: '新聞', reading: 'しんぶん', meaning: 'newspaper', category: 'n5' },
+        { word: '映画', reading: 'えいが', meaning: 'movie', category: 'n5' },
+        { word: '音楽', reading: 'おんがく', meaning: 'music', category: 'n5' },
+        { word: '部屋', reading: 'へや', meaning: 'room', category: 'n5' },
+        { word: '家', reading: 'いえ', meaning: 'house', category: 'n5' },
+        { word: '車', reading: 'くるま', meaning: 'car', category: 'n5' },
+        { word: '電車', reading: 'でんしゃ', meaning: 'train', category: 'n5' },
+        { word: '水', reading: 'みず', meaning: 'water', category: 'n5' },
+        { word: 'お茶', reading: 'おちゃ', meaning: 'tea', category: 'n5' },
+        { word: '朝ご飯', reading: 'あさごはん', meaning: 'breakfast', category: 'n5' },
+        { word: '昼ご飯', reading: 'ひるごはん', meaning: 'lunch', category: 'n5' },
+        { word: '晩ご飯', reading: 'ばんごはん', meaning: 'dinner', category: 'n5' },
+        { word: '肉', reading: 'にく', meaning: 'meat', category: 'n5' },
+        { word: '魚', reading: 'さかな', meaning: 'fish', category: 'n5' },
+        { word: '野菜', reading: 'やさい', meaning: 'vegetables', category: 'n5' },
+        { word: '犬', reading: 'いぬ', meaning: 'dog', category: 'n5' },
+        { word: '猫', reading: 'ねこ', meaning: 'cat', category: 'n5' },
+        { word: '山', reading: 'やま', meaning: 'mountain', category: 'n5' },
+        { word: '川', reading: 'かわ', meaning: 'river', category: 'n5' },
+        { word: '海', reading: 'うみ', meaning: 'sea', category: 'n5' },
+        { word: '今日', reading: 'きょう', meaning: 'today', category: 'n5' },
+        { word: '明日', reading: 'あした', meaning: 'tomorrow', category: 'n5' },
+        { word: '昨日', reading: 'きのう', meaning: 'yesterday', category: 'n5' },
+        { word: '朝', reading: 'あさ', meaning: 'morning', category: 'n5' },
+        { word: '夜', reading: 'よる', meaning: 'night', category: 'n5' },
+        { word: '大きい', reading: 'おおきい', meaning: 'big', category: 'n5' },
+        { word: '小さい', reading: 'ちいさい', meaning: 'small', category: 'n5' },
+        { word: '新しい', reading: 'あたらしい', meaning: 'new', category: 'n5' },
+        { word: '古い', reading: 'ふるい', meaning: 'old', category: 'n5' },
+        { word: '美味しい', reading: 'おいしい', meaning: 'delicious', category: 'n5' },
+        { word: '食べる', reading: 'たべる', meaning: 'to eat', category: 'n5' },
+        { word: '飲む', reading: 'のむ', meaning: 'to drink', category: 'n5' },
+        { word: '見る', reading: 'みる', meaning: 'to see', category: 'n5' },
+        { word: '聞く', reading: 'きく', meaning: 'to hear', category: 'n5' },
+        { word: '話す', reading: 'はなす', meaning: 'to speak', category: 'n5' },
+        { word: '読む', reading: 'よむ', meaning: 'to read', category: 'n5' },
+        { word: '書く', reading: 'かく', meaning: 'to write', category: 'n5' },
+        { word: '行く', reading: 'いく', meaning: 'to go', category: 'n5' },
+        { word: '来る', reading: 'くる', meaning: 'to come', category: 'n5' },
+        { word: '帰る', reading: 'かえる', meaning: 'to return', category: 'n5' },
+        { word: '買う', reading: 'かう', meaning: 'to buy', category: 'n5' },
+        { word: '好き', reading: 'すき', meaning: 'like', category: 'n5' },
+        { word: '嫌い', reading: 'きらい', meaning: 'dislike', category: 'n5' },
+        { word: '天気', reading: 'てんき', meaning: 'weather', category: 'n5' },
+        { word: '雨', reading: 'あめ', meaning: 'rain', category: 'n5' },
+        { word: '雪', reading: 'ゆき', meaning: 'snow', category: 'n5' },
+        { word: '花', reading: 'はな', meaning: 'flower', category: 'n5' },
+        { word: '時間', reading: 'じかん', meaning: 'time', category: 'n5' },
+        { word: '一分', reading: 'いっぷん', meaning: 'one minute', category: 'n5' },
+        { word: '一万円', reading: 'いちまんえん', meaning: '10,000 yen', category: 'n5' },
+        { word: '五百円', reading: 'ごひゃくえん', meaning: '500 yen', category: 'n5' },
+        { word: '今年', reading: 'ことし', meaning: 'this year', category: 'n5' },
+        { word: '来年', reading: 'らいねん', meaning: 'next year', category: 'n5' },
+        { word: '去年', reading: 'きょねん', meaning: 'last year', category: 'n5' },
+
+        { word: '親', reading: 'おや', meaning: 'parent', category: 'n4' },
+        { word: '祖父', reading: 'そふ', meaning: 'grandfather', category: 'n4' },
+        { word: '祖母', reading: 'そぼ', meaning: 'grandmother', category: 'n4' },
+        { word: '夫婦', reading: 'ふうふ', meaning: 'married couple', category: 'n4' },
+        { word: '住所', reading: 'じゅうしょ', meaning: 'address', category: 'n4' },
+        { word: '氏名', reading: 'しめい', meaning: 'full name', category: 'n4' },
+        { word: '社員', reading: 'しゃいん', meaning: 'employee', category: 'n4' },
+        { word: '社長', reading: 'しゃちょう', meaning: 'president', category: 'n4' },
+        { word: '仕事', reading: 'しごと', meaning: 'work / job', category: 'n4' },
+        { word: '会議', reading: 'かいぎ', meaning: 'meeting', category: 'n4' },
+        { word: '地図', reading: 'ちず', meaning: 'map', category: 'n4' },
+        { word: '旅行', reading: 'りょこう', meaning: 'travel', category: 'n4' },
+        { word: '予約', reading: 'よやく', meaning: 'reservation', category: 'n4' },
+        { word: '切符', reading: 'きっぷ', meaning: 'ticket', category: 'n4' },
+        { word: '無料', reading: 'むりょう', meaning: 'free of charge', category: 'n4' },
+        { word: '有料', reading: 'ゆうりょう', meaning: 'paid', category: 'n4' },
+        { word: '気温', reading: 'きおん', meaning: 'temperature', category: 'n4' },
+        { word: '曇り', reading: 'くもり', meaning: 'cloudy', category: 'n4' },
+        { word: '晴れ', reading: 'はれ', meaning: 'sunny', category: 'n4' },
+        { word: '食事', reading: 'しょくじ', meaning: 'meal', category: 'n4' },
+        { word: '料理', reading: 'りょうり', meaning: 'cooking', category: 'n4' },
+        { word: '味', reading: 'あじ', meaning: 'taste', category: 'n4' },
+        { word: '注文', reading: 'ちゅうもん', meaning: 'order', category: 'n4' },
+        { word: '説明', reading: 'せつめい', meaning: 'explanation', category: 'n4' },
+        { word: '質問', reading: 'しつもん', meaning: 'question', category: 'n4' },
+        { word: '意味', reading: 'いみ', meaning: 'meaning', category: 'n4' },
+        { word: '言葉', reading: 'ことば', meaning: 'word', category: 'n4' },
+        { word: '文法', reading: 'ぶんぽう', meaning: 'grammar', category: 'n4' },
+        { word: '漢字', reading: 'かんじ', meaning: 'kanji', category: 'n4' },
+        { word: '練習', reading: 'れんしゅう', meaning: 'practice', category: 'n4' },
+        { word: '試験', reading: 'しけん', meaning: 'exam', category: 'n4' },
+        { word: '結果', reading: 'けっか', meaning: 'result', category: 'n4' },
+        { word: '日記', reading: 'にっき', meaning: 'diary', category: 'n4' },
+        { word: '小説', reading: 'しょうせつ', meaning: 'novel', category: 'n4' },
+        { word: '約束', reading: 'やくそく', meaning: 'promise', category: 'n4' },
+        { word: '連絡', reading: 'れんらく', meaning: 'contact', category: 'n4' },
+        { word: '準備', reading: 'じゅんび', meaning: 'preparation', category: 'n4' },
+        { word: '経験', reading: 'けいけん', meaning: 'experience', category: 'n4' },
+        { word: '生活', reading: 'せいかつ', meaning: 'life / living', category: 'n4' },
+        { word: '習慣', reading: 'しゅうかん', meaning: 'custom / habit', category: 'n4' },
+        { word: '趣味', reading: 'しゅみ', meaning: 'hobby', category: 'n4' },
+        { word: '興味', reading: 'きょうみ', meaning: 'interest', category: 'n4' },
+        { word: '世界中', reading: 'せかいじゅう', meaning: 'all over the world', category: 'n4' },
+        { word: '国際', reading: 'こくさい', meaning: 'international', category: 'n4' },
+        { word: '世界', reading: 'せかい', meaning: 'world', category: 'n4' },
+        { word: '社会', reading: 'しゃかい', meaning: 'society', category: 'n4' },
+        { word: '場合', reading: 'ばあい', meaning: 'case', category: 'n4' },
+        { word: '方法', reading: 'ほうほう', meaning: 'method', category: 'n4' },
+        { word: '種類', reading: 'しゅるい', meaning: 'kind / type', category: 'n4' },
+        { word: '関係', reading: 'かんけい', meaning: 'relationship', category: 'n4' },
+        { word: '運動', reading: 'うんどう', meaning: 'exercise', category: 'n4' },
+        { word: '散歩', reading: 'さんぽ', meaning: 'walk', category: 'n4' },
+        { word: '試合', reading: 'しあい', meaning: 'match', category: 'n4' },
+        { word: '不便', reading: 'ふべん', meaning: 'inconvenient', category: 'n4' },
+        { word: '危険', reading: 'きけん', meaning: 'dangerous', category: 'n4' },
+        { word: '安全', reading: 'あんぜん', meaning: 'safe', category: 'n4' },
+        { word: '事故', reading: 'じこ', meaning: 'accident', category: 'n4' },
+        { word: '医者', reading: 'いしゃ', meaning: 'doctor', category: 'n4' },
+        { word: '薬', reading: 'くすり', meaning: 'medicine', category: 'n4' },
+        { word: '熱', reading: 'ねつ', meaning: 'fever', category: 'n4' },
+        { word: '咳', reading: 'せき', meaning: 'cough', category: 'n4' },
+        { word: '心配', reading: 'しんぱい', meaning: 'worry', category: 'n4' },
+        { word: '大切', reading: 'たいせつ', meaning: 'important', category: 'n4' },
+        { word: '面倒', reading: 'めんどう', meaning: 'troublesome', category: 'n4' },
+        { word: '複雑', reading: 'ふくざつ', meaning: 'complex', category: 'n4' },
+        { word: '簡単', reading: 'かんたん', meaning: 'simple', category: 'n4' },
+        { word: '可能', reading: 'かのう', meaning: 'possible', category: 'n4' },
+        { word: '必要', reading: 'ひつよう', meaning: 'necessary', category: 'n4' },
+        { word: '重要', reading: 'じゅうよう', meaning: 'important', category: 'n4' },
+        { word: '残念', reading: 'ざんねん', meaning: 'regrettable', category: 'n4' },
+        { word: '不思議', reading: 'ふしぎ', meaning: 'mysterious', category: 'n4' },
+        { word: '最近', reading: 'さいきん', meaning: 'recently', category: 'n4' },
+        { word: '今後', reading: 'こんご', meaning: 'future', category: 'n4' },
+        { word: '将来', reading: 'しょうらい', meaning: 'future', category: 'n4' },
+        { word: '現在', reading: 'げんざい', meaning: 'present', category: 'n4' },
+        { word: '過去', reading: 'かこ', meaning: 'past', category: 'n4' },
+        { word: '理由', reading: 'りゆう', meaning: 'reason', category: 'n4' },
+        { word: '原因', reading: 'げんいん', meaning: 'cause', category: 'n4' },
+        { word: '政治', reading: 'せいじ', meaning: 'politics', category: 'n4' },
+        { word: '経済', reading: 'けいざい', meaning: 'economy', category: 'n4' },
+        { word: '歴史', reading: 'れきし', meaning: 'history', category: 'n4' },
+        { word: '科学', reading: 'かがく', meaning: 'science', category: 'n4' },
+        { word: '技術', reading: 'ぎじゅつ', meaning: 'technology', category: 'n4' },
+        { word: '環境', reading: 'かんきょう', meaning: 'environment', category: 'n4' },
+        { word: '影響', reading: 'えいきょう', meaning: 'influence', category: 'n4' },
+        { word: '守る', reading: 'まもる', meaning: 'to protect', category: 'n4' },
+        { word: '始める', reading: 'はじめる', meaning: 'to start', category: 'n4' },
+        { word: '終わる', reading: 'おわる', meaning: 'to finish', category: 'n4' },
+        { word: '変える', reading: 'かえる', meaning: 'to change', category: 'n4' },
+        { word: '出す', reading: 'だす', meaning: 'to take out', category: 'n4' },
+        { word: '入る', reading: 'はいる', meaning: 'to enter', category: 'n4' },
+        { word: '座る', reading: 'すわる', meaning: 'to sit', category: 'n4' },
+        { word: '立つ', reading: 'たつ', meaning: 'to stand', category: 'n4' },
+        { word: '歩く', reading: 'あるく', meaning: 'to walk', category: 'n4' },
+        { word: '走る', reading: 'はしる', meaning: 'to run', category: 'n4' },
+        { word: '泳ぐ', reading: 'およぐ', meaning: 'to swim', category: 'n4' },
+        { word: '比べる', reading: 'くらべる', meaning: 'to compare', category: 'n4' },
+        { word: '集める', reading: 'あつめる', meaning: 'to collect', category: 'n4' },
+        { word: '準備する', reading: 'じゅんびする', meaning: 'to prepare', category: 'n4' },
+        { word: '説明する', reading: 'せつめいする', meaning: 'to explain', category: 'n4' },
+        { word: '連絡する', reading: 'れんらくする', meaning: 'to contact', category: 'n4' },
+        { word: '参加する', reading: 'さんかする', meaning: 'to participate', category: 'n4' },
+        { word: '旅行する', reading: 'りょこうする', meaning: 'to travel', category: 'n4' },
+        { word: '確認する', reading: 'かくにんする', meaning: 'to confirm', category: 'n4' },
+        { word: '成功する', reading: 'せいこうする', meaning: 'to succeed', category: 'n4' },
+        { word: '失敗する', reading: 'しっぱいする', meaning: 'to fail', category: 'n4' },
+        { word: '便利', reading: 'べんり', meaning: 'convenient', category: 'n4' },
+
+        { word: '恋愛', reading: 'れんあい', meaning: 'romance', category: 'n3' },
+        { word: '愛', reading: 'あい', meaning: 'love', category: 'n3' },
+        { word: '友情', reading: 'ゆうじょう', meaning: 'friendship', category: 'n3' },
+        { word: '信頼', reading: 'しんらい', meaning: 'trust', category: 'n3' },
+        { word: '尊敬', reading: 'そんけい', meaning: 'respect', category: 'n3' },
+        { word: '性格', reading: 'せいかく', meaning: 'personality', category: 'n3' },
+        { word: '気分', reading: 'きぶん', meaning: 'feeling / mood', category: 'n3' },
+        { word: '態度', reading: 'たいど', meaning: 'attitude', category: 'n3' },
+        { word: '記憶', reading: 'きおく', meaning: 'memory', category: 'n3' },
+        { word: '努力', reading: 'どりょく', meaning: 'effort', category: 'n3' },
+        { word: '競争', reading: 'きょうそう', meaning: 'competition', category: 'n3' },
+        { word: '比較', reading: 'ひかく', meaning: 'comparison', category: 'n3' },
+        { word: '価値', reading: 'かち', meaning: 'value', category: 'n3' },
+        { word: '予算', reading: 'よさん', meaning: 'budget', category: 'n3' },
+        { word: '計画', reading: 'けいかく', meaning: 'plan', category: 'n3' },
+        { word: '提案', reading: 'ていあん', meaning: 'proposal', category: 'n3' },
+        { word: '意見', reading: 'いけん', meaning: 'opinion', category: 'n3' },
+        { word: '情報', reading: 'じょうほう', meaning: 'information', category: 'n3' },
+        { word: '知識', reading: 'ちしき', meaning: 'knowledge', category: 'n3' },
+        { word: '教育', reading: 'きょういく', meaning: 'education', category: 'n3' },
+        { word: '文化', reading: 'ぶんか', meaning: 'culture', category: 'n3' },
+        { word: '伝統', reading: 'でんとう', meaning: 'tradition', category: 'n3' },
+        { word: '宗教', reading: 'しゅうきょう', meaning: 'religion', category: 'n3' },
+        { word: '法律', reading: 'ほうりつ', meaning: 'law', category: 'n3' },
+        { word: '主義', reading: 'しゅぎ', meaning: 'principle / -ism', category: 'n3' },
+        { word: '組織', reading: 'そしき', meaning: 'organization', category: 'n3' },
+        { word: '責任', reading: 'せきにん', meaning: 'responsibility', category: 'n3' },
+        { word: '権利', reading: 'けんり', meaning: 'right', category: 'n3' },
+        { word: '自由', reading: 'じゆう', meaning: 'freedom', category: 'n3' },
+        { word: '平等', reading: 'びょうどう', meaning: 'equality', category: 'n3' },
+        { word: '平和', reading: 'へいわ', meaning: 'peace', category: 'n3' },
+        { word: '契約', reading: 'けいやく', meaning: 'contract', category: 'n3' },
+        { word: '死亡', reading: 'しぼう', meaning: 'death', category: 'n3' },
+        { word: '生産', reading: 'せいさん', meaning: 'production', category: 'n3' },
+        { word: '消費', reading: 'しょうひ', meaning: 'consumption', category: 'n3' },
+        { word: '開発', reading: 'かいはつ', meaning: 'development', category: 'n3' },
+        { word: '自然', reading: 'しぜん', meaning: 'nature', category: 'n3' },
+        { word: '資源', reading: 'しげん', meaning: 'resources', category: 'n3' },
+        { word: '污染', reading: 'おせん', meaning: 'pollution', category: 'n3' },
+        { word: '地球', reading: 'ちきゅう', meaning: 'Earth', category: 'n3' },
+        { word: '宇宙', reading: 'うちゅう', meaning: 'universe', category: 'n3' },
+        { word: '太陽', reading: 'たいよう', meaning: 'sun', category: 'n3' },
+        { word: '地震', reading: 'じしん', meaning: 'earthquake', category: 'n3' },
+        { word: '犯罪', reading: 'はんざい', meaning: 'crime', category: 'n3' },
+        { word: '警察', reading: 'けいさつ', meaning: 'police', category: 'n3' },
+        { word: '選手', reading: 'せんしゅ', meaning: 'athlete', category: 'n3' },
+        { word: '健康', reading: 'けんこう', meaning: 'health', category: 'n3' },
+        { word: '治療', reading: 'ちりょう', meaning: 'treatment', category: 'n3' },
+        { word: '手術', reading: 'しゅじゅつ', meaning: 'operation', category: 'n3' },
+        { word: '効果', reading: 'こうか', meaning: 'effect', category: 'n3' },
+        { word: '性質', reading: 'せいしつ', meaning: 'property', category: 'n3' },
+        { word: '特徴', reading: 'とくちょう', meaning: 'characteristic', category: 'n3' },
+        { word: '状態', reading: 'じょうたい', meaning: 'condition', category: 'n3' },
+        { word: '雰囲気', reading: 'ふんいき', meaning: 'atmosphere', category: 'n3' },
+        { word: '印象', reading: 'いんしょう', meaning: 'impression', category: 'n3' },
+        { word: '評価', reading: 'ひょうか', meaning: 'evaluation', category: 'n3' },
+        { word: '判断', reading: 'はんだん', meaning: 'judgment', category: 'n3' },
+        { word: '選択', reading: 'せんたく', meaning: 'selection', category: 'n3' },
+        { word: '決定', reading: 'けってい', meaning: 'decision', category: 'n3' },
+        { word: '通信', reading: 'つうしん', meaning: 'communication', category: 'n3' },
+        { word: '放送', reading: 'ほうそう', meaning: 'broadcast', category: 'n3' },
+        { word: '出版', reading: 'しゅっぱん', meaning: 'publication', category: 'n3' },
+        { word: '表現', reading: 'ひょうげん', meaning: 'expression', category: 'n3' },
+        { word: '感情', reading: 'かんじょう', meaning: 'emotion', category: 'n3' },
+        { word: '希望', reading: 'きぼう', meaning: 'hope', category: 'n3' },
+        { word: '目標', reading: 'もくひょう', meaning: 'goal', category: 'n3' },
+        { word: '夢', reading: 'ゆめ', meaning: 'dream', category: 'n3' },
+        { word: '理想', reading: 'りそう', meaning: 'ideal', category: 'n3' },
+        { word: '現実', reading: 'げんじつ', meaning: 'reality', category: 'n3' },
+        { word: '本質', reading: 'ほんしつ', meaning: 'essence', category: 'n3' },
+        { word: '概念', reading: 'がいねん', meaning: 'concept', category: 'n3' },
+        { word: '論理', reading: 'ろんり', meaning: 'logic', category: 'n3' },
+        { word: '対応', reading: 'たいおう', meaning: 'response', category: 'n3' },
+        { word: '処理', reading: 'しょり', meaning: 'processing', category: 'n3' },
+        { word: '改革', reading: 'かいかく', meaning: 'reform', category: 'n3' },
+        { word: '変化', reading: 'へんか', meaning: 'change', category: 'n3' },
+        { word: '発展', reading: 'はってん', meaning: 'development', category: 'n3' },
+        { word: '成長', reading: 'せいちょう', meaning: 'growth', category: 'n3' },
+        { word: '交通', reading: 'こうつう', meaning: 'traffic', category: 'n3' },
+        { word: '道路', reading: 'どうろ', meaning: 'road', category: 'n3' },
+        { word: '港', reading: 'みなと', meaning: 'harbor', category: 'n3' },
+        { word: '空港', reading: 'くうこう', meaning: 'airport', category: 'n3' },
+        { word: '産業', reading: 'さんぎょう', meaning: 'industry', category: 'n3' },
+        { word: '農業', reading: 'のうぎょう', meaning: 'agriculture', category: 'n3' },
+        { word: '工業', reading: 'こうぎょう', meaning: 'industry', category: 'n3' },
+        { word: '金融', reading: 'きんゆう', meaning: 'finance', category: 'n3' },
+        { word: '貿易', reading: 'ぼうえき', meaning: 'trade', category: 'n3' },
+        { word: '投資', reading: 'とうし', meaning: 'investment', category: 'n3' },
+        { word: '保険', reading: 'ほけん', meaning: 'insurance', category: 'n3' },
+        { word: '税金', reading: 'ぜいきん', meaning: 'tax', category: 'n3' },
+        { word: '募集', reading: 'ぼしゅう', meaning: 'recruitment', category: 'n3' },
+        { word: '面接', reading: 'めんせつ', meaning: 'interview', category: 'n3' },
+        { word: '禁止', reading: 'きんし', meaning: 'prohibition', category: 'n3' },
+        { word: '差別', reading: 'さべつ', meaning: 'discrimination', category: 'n3' },
+
+        { word: '優先', reading: 'ゆうせん', meaning: 'priority', category: 'n2' },
+        { word: '傾向', reading: 'けいこう', meaning: 'tendency', category: 'n2' },
+        { word: '側面', reading: 'そくめん', meaning: 'aspect', category: 'n2' },
+        { word: '見地', reading: 'けんち', meaning: 'viewpoint', category: 'n2' },
+        { word: '立場', reading: 'たちば', meaning: 'position', category: 'n2' },
+        { word: '要点', reading: 'ようてん', meaning: 'main point', category: 'n2' },
+        { word: '課題', reading: 'かだい', meaning: 'task', category: 'n2' },
+        { word: '要素', reading: 'ようそ', meaning: 'element', category: 'n2' },
+        { word: '関連', reading: 'かんれん', meaning: 'relation', category: 'n2' },
+        { word: '因果', reading: 'いんが', meaning: 'cause and effect', category: 'n2' },
+        { word: '相関', reading: 'そうかん', meaning: 'correlation', category: 'n2' },
+        { word: '対策', reading: 'たいさく', meaning: 'countermeasure', category: 'n2' },
+        { word: '措置', reading: 'そち', meaning: 'measure', category: 'n2' },
+        { word: '提案', reading: 'ていあん', meaning: 'suggestion', category: 'n2' },
+        { word: '提出', reading: 'ていしゅつ', meaning: 'submission', category: 'n2' },
+        { word: '引用', reading: 'いんよう', meaning: 'quotation', category: 'n2' },
+        { word: '参考', reading: 'さんこう', meaning: 'reference', category: 'n2' },
+        { word: '検証', reading: 'けんしょう', meaning: 'verification', category: 'n2' },
+        { word: '検討', reading: 'けんとう', meaning: 'review', category: 'n2' },
+        { word: '分析', reading: 'ぶんせき', meaning: 'analysis', category: 'n2' },
+        { word: '解釈', reading: 'かいしゃく', meaning: 'interpretation', category: 'n2' },
+        { word: '理解', reading: 'りかい', meaning: 'understanding', category: 'n2' },
+        { word: '認識', reading: 'にんしき', meaning: 'recognition', category: 'n2' },
+        { word: '了承', reading: 'りょうしょう', meaning: 'acknowledgment', category: 'n2' },
+        { word: '承認', reading: 'しょうにん', meaning: 'approval', category: 'n2' },
+        { word: '認可', reading: 'にんか', meaning: 'authorization', category: 'n2' },
+        { word: '規制', reading: 'きせい', meaning: 'regulation', category: 'n2' },
+        { word: '制限', reading: 'せいげん', meaning: 'restriction', category: 'n2' },
+        { word: '制約', reading: 'せいやく', meaning: 'constraint', category: 'n2' },
+        { word: '強制', reading: 'きょうせい', meaning: 'coercion', category: 'n2' },
+        { word: '命令', reading: 'めいれい', meaning: 'order', category: 'n2' },
+        { word: '指示', reading: 'しじ', meaning: 'instruction', category: 'n2' },
+        { word: '現状', reading: 'げんじょう', meaning: 'current situation', category: 'n2' },
+        { word: '状況', reading: 'じょうきょう', meaning: 'situation', category: 'n2' },
+        { word: '事情', reading: 'じじょう', meaning: 'circumstances', category: 'n2' },
+        { word: '範囲', reading: 'はんい', meaning: 'range', category: 'n2' },
+        { word: '領域', reading: 'りょういき', meaning: 'domain', category: 'n2' },
+        { word: '分野', reading: 'ぶんや', meaning: 'field', category: 'n2' },
+        { word: '体系', reading: 'たいけい', meaning: 'system', category: 'n2' },
+        { word: '構造', reading: 'こうぞう', meaning: 'structure', category: 'n2' },
+        { word: '仕組み', reading: 'しくみ', meaning: 'mechanism', category: 'n2' },
+        { word: '制度', reading: 'せいど', meaning: 'system', category: 'n2' },
+        { word: '体制', reading: 'たいせい', meaning: 'regime', category: 'n2' },
+        { word: '分類', reading: 'ぶんるい', meaning: 'classification', category: 'n2' },
+        { word: '内容', reading: 'ないよう', meaning: 'content', category: 'n2' },
+        { word: '概略', reading: 'がいりゃく', meaning: 'outline', category: 'n2' },
+        { word: '概要', reading: 'がいよう', meaning: 'summary', category: 'n2' },
+        { word: '実践', reading: 'じっせん', meaning: 'practice', category: 'n2' },
+        { word: '理論', reading: 'りろん', meaning: 'theory', category: 'n2' },
+        { word: '原理', reading: 'げんり', meaning: 'principle', category: 'n2' },
+        { word: '原則', reading: 'げんそく', meaning: 'principle', category: 'n2' },
+        { word: '法則', reading: 'ほうそく', meaning: 'law', category: 'n2' },
+        { word: '定理', reading: 'ていり', meaning: 'theorem', category: 'n2' },
+        { word: '命題', reading: 'めいだい', meaning: 'proposition', category: 'n2' },
+        { word: '仮説', reading: 'かせつ', meaning: 'hypothesis', category: 'n2' },
+        { word: '前提', reading: 'ぜんてい', meaning: 'premise', category: 'n2' },
+        { word: '結論', reading: 'けつろん', meaning: 'conclusion', category: 'n2' },
+        { word: '根拠', reading: 'こんきょ', meaning: 'basis', category: 'n2' },
+        { word: '証拠', reading: 'しょうこ', meaning: 'evidence', category: 'n2' },
+        { word: '事実', reading: 'じじつ', meaning: 'fact', category: 'n2' },
+        { word: '真実', reading: 'しんじつ', meaning: 'truth', category: 'n2' },
+        { word: '現象', reading: 'げんしょう', meaning: 'phenomenon', category: 'n2' },
+        { word: '法則', reading: 'ほうそく', meaning: 'rule', category: 'n2' },
+        { word: '矛盾', reading: 'むじゅん', meaning: 'contradiction', category: 'n2' },
+        { word: '相容れない', reading: 'あいいれない', meaning: 'incompatible', category: 'n2' },
+        { word: '対立', reading: 'たいりつ', meaning: 'confrontation', category: 'n2' },
+        { word: '抗争', reading: 'こうそう', meaning: 'struggle', category: 'n2' },
+        { word: '葛藤', reading: 'かっとう', meaning: 'conflict', category: 'n2' },
+        { word: '衝突', reading: 'しょうとつ', meaning: 'collision', category: 'n2' },
+        { word: '共存', reading: 'きょうそん', meaning: 'coexistence', category: 'n2' },
+        { word: '調和', reading: 'ちょうわ', meaning: 'harmony', category: 'n2' },
+        { word: '均衡', reading: 'きんこう', meaning: 'balance', category: 'n2' },
+        { word: '安定', reading: 'あんてい', meaning: 'stability', category: 'n2' },
+        { word: '変化', reading: 'へんか', meaning: 'fluctuation', category: 'n2' },
+        { word: '転換', reading: 'てんかん', meaning: 'conversion', category: 'n2' },
+        { word: '移行', reading: 'いこう', meaning: 'transition', category: 'n2' },
+        { word: '進化', reading: 'しんか', meaning: 'evolution', category: 'n2' },
+        { word: '退化', reading: 'たいか', meaning: 'degeneration', category: 'n2' },
+        { word: '適応', reading: 'てきおう', meaning: 'adaptation', category: 'n2' },
+        { word: '克服', reading: 'こくふく', meaning: 'overcoming', category: 'n2' },
+        { word: '実現', reading: 'じつげん', meaning: 'realization', category: 'n2' },
+        { word: '達成', reading: 'たっせい', meaning: 'achievement', category: 'n2' },
+        { word: '完了', reading: 'かんりょう', meaning: 'completion', category: 'n2' },
+        { word: '休止', reading: 'きゅうし', meaning: 'suspension', category: 'n2' },
+        { word: '停滞', reading: 'ていたい', meaning: 'stagnation', category: 'n2' },
+        { word: '促進', reading: 'そくしん', meaning: 'promotion', category: 'n2' },
+        { word: '抑制', reading: 'よくせい', meaning: 'suppression', category: 'n2' },
+        { word: '強化', reading: 'きょうか', meaning: 'strengthening', category: 'n2' },
+        { word: '緩和', reading: 'かんわ', meaning: 'relaxation', category: 'n2' },
+        { word: '増大', reading: 'ぞうだい', meaning: 'increase', category: 'n2' },
+        { word: '減少', reading: 'げんしょう', meaning: 'decrease', category: 'n2' },
+        { word: '拡大', reading: 'かくだい', meaning: 'expansion', category: 'n2' },
+        { word: '縮小', reading: 'しゅくしょう', meaning: 'reduction', category: 'n2' },
+        { word: '向上', reading: 'こうじょう', meaning: 'improvement', category: 'n2' },
+        { word: '低下', reading: 'ていか', meaning: 'decline', category: 'n2' },
+        { word: '維持', reading: 'いじ', meaning: 'maintenance', category: 'n2' },
+        { word: '保存', reading: 'ほぞん', meaning: 'preservation', category: 'n2' },
+        { word: '廃棄', reading: 'はいき', meaning: 'discard', category: 'n2' },
+        { word: '除去', reading: 'じょきょ', meaning: 'removal', category: 'n2' },
+        { word: '消去', reading: 'しょうきょ', meaning: 'elimination', category: 'n2' },
+        { word: '補足', reading: 'ほそく', meaning: 'supplement', category: 'n2' },
+        { word: '補償', reading: 'ほしょう', meaning: 'compensation', category: 'n2' },
+        { word: '補足', reading: 'ほそく', meaning: 'addition', category: 'n2' },
+        { word: '修正', reading: 'しゅうせい', meaning: 'revision', category: 'n2' },
+        { word: '是正', reading: 'ぜせい', meaning: 'correction', category: 'n2' },
+        { word: '改革', reading: 'かいかく', meaning: 'reform', category: 'n2' },
+        { word: '革新', reading: 'かくしん', meaning: 'innovation', category: 'n2' },
+
+        { word: '曖昧', reading: 'あいまい', meaning: 'ambiguous', category: 'n1' },
+        { word: '意図', reading: 'いと', meaning: 'intention', category: 'n1' },
+        { word: '連続', reading: 'れんぞく', meaning: 'continuation', category: 'n1' },
+        { word: '完成', reading: 'かんせい', meaning: 'completion', category: 'n1' },
+        { word: '調整', reading: 'ちょうせい', meaning: 'adjustment', category: 'n1' },
+        { word: '評価', reading: 'ひょうか', meaning: 'evaluation', category: 'n1' },
+        { word: '特徴', reading: 'とutchō', meaning: 'feature', category: 'n1' },
+        { word: '必然', reading: 'ひつぜん', meaning: 'inevitable', category: 'n1' },
+        { word: '当然', reading: 'とうぜん', meaning: 'natural', category: 'n1' },
+        { word: '本質', reading: 'ほんしつ', meaning: 'essence', category: 'n1' },
+        { word: '抽象', reading: 'ちゅうしょう', meaning: 'abstract', category: 'n1' },
+        { word: '具体', reading: 'ぐたい', meaning: 'concrete', category: 'n1' },
+        { word: '論理', reading: 'ろんり', meaning: 'logic', category: 'n1' },
+        { word: '哲学', reading: 'てつがく', meaning: 'philosophy', category: 'n1' },
+        { word: '心理学', reading: 'しんりがく', meaning: 'psychology', category: 'n1' },
+        { word: '物理学', reading: 'ぶつりがく', meaning: 'physics', category: 'n1' },
+        { word: '化学', reading: 'かがく', meaning: 'chemistry', category: 'n1' },
+        { word: '数学', reading: 'すうがく', meaning: 'mathematics', category: 'n1' },
+        { word: '統計学', reading: 'とうけいがく', meaning: 'statistics', category: 'n1' },
+        { word: '人工知能', reading: 'じんこうちのう', meaning: 'AI', category: 'n1' },
+        { word: '生態学', reading: 'せいたいがく', meaning: 'ecology', category: 'n1' },
+        { word: '遺伝', reading: 'いでん', meaning: 'heredity', category: 'n1' },
+        { word: '細胞', reading: 'さいぼう', meaning: 'cell', category: 'n1' },
+        { word: '分子', reading: 'ぶんし', meaning: 'molecule', category: 'n1' },
+        { word: '原子', reading: 'げんし', meaning: 'atom', category: 'n1' },
+        { word: '重力', reading: 'じゅうりょく', meaning: 'gravity', category: 'n1' },
+        { word: '磁気', reading: 'じき', meaning: 'magnetism', category: 'n1' },
+        { word: '速度', reading: 'そくど', meaning: 'speed', category: 'n1' },
+        { word: '加速度', reading: 'かそくど', meaning: 'acceleration', category: 'n1' },
+        { word: '圧力', reading: 'あつりょく', meaning: 'pressure', category: 'n1' },
+        { word: '確率', reading: 'かくりつ', meaning: 'probability', category: 'n1' },
+        { word: '統計', reading: 'とうけい', meaning: 'statistics', category: 'n1' },
+        { word: '分析', reading: 'ぶんせき', meaning: 'analysis', category: 'n1' },
+        { word: '発見', reading: 'はっけん', meaning: 'discovery', category: 'n1' },
+        { word: '発明', reading: 'はつめい', meaning: 'invention', category: 'n1' },
+        { word: '創造', reading: 'そうぞう', meaning: 'creation', category: 'n1' },
+        { word: '設計', reading: 'せっけい', meaning: 'design', category: 'n1' },
+        { word: '製造', reading: 'せいぞう', meaning: 'manufacture', category: 'n1' },
+        { word: '供給', reading: 'きょうきゅう', meaning: 'supply', category: 'n1' },
+        { word: '需要', reading: 'じゅよう', meaning: 'demand', category: 'n1' },
+        { word: '流通', reading: 'りゅうつう', meaning: 'distribution', category: 'n1' },
+        { word: '物流', reading: 'ぶつりゅう', meaning: 'logistics', category: 'n1' },
+        { word: '書籍', reading: 'しょせき', meaning: 'books', category: 'n1' },
+        { word: '絵画', reading: 'かいが', meaning: 'painting', category: 'n1' },
+        { word: '彫刻', reading: 'ちょうこく', meaning: 'sculpture', category: 'n1' },
+        { word: '演劇', reading: 'えんげき', meaning: 'theater', category: 'n1' },
+        { word: '橋梁', reading: 'きょうりょう', meaning: 'bridge', category: 'n1' },
+        { word: '隧道', reading: 'ずいどう', meaning: 'tunnel', category: 'n1' },
+        { word: '鉄道', reading: 'てつどう', meaning: 'railway', category: 'n1' },
+        { word: '高速', reading: 'こうそく', meaning: 'high speed', category: 'n1' },
+        { word: '罰則', reading: 'ばっそく', meaning: 'penalty', category: 'n1' },
+        { word: '刑罰', reading: 'けいばつ', meaning: 'punishment', category: 'n1' },
+        { word: '逮捕', reading: 'たいほ', meaning: 'arrest', category: 'n1' },
+        { word: '裁判', reading: 'さいばん', meaning: 'trial', category: 'n1' },
+        { word: '立法', reading: 'りっぽう', meaning: 'legislation', category: 'n1' },
+        { word: '司法', reading: 'しほう', meaning: 'judiciary', category: 'n1' },
+        { word: '外交', reading: 'がいこう', meaning: 'diplomacy', category: 'n1' },
+        { word: '交流', reading: 'こうりゅう', meaning: 'exchange', category: 'n1' },
+        { word: '条約', reading: 'じょうやく', meaning: 'treaty', category: 'n1' },
+        { word: '同盟', reading: 'どうめい', meaning: 'alliance', category: 'n1' },
+        { word: '漁業', reading: 'ぎょぎょう', meaning: 'fishing', category: 'n1' },
+        { word: '林業', reading: 'りんぎょう', meaning: 'forestry', category: 'n1' },
+        { word: '市場', reading: 'しじょう', meaning: 'market', category: 'n1' },
+        { word: '資本', reading: 'しほん', meaning: 'capital', category: 'n1' },
+        { word: '労働', reading: 'ろうどう', meaning: 'labor', category: 'n1' },
+        { word: '雇用', reading: 'こよう', meaning: 'employment', category: 'n1' },
+        { word: '失業', reading: 'しつぎょう', meaning: 'unemployment', category: 'n1' },
+        { word: '給与', reading: 'きゅうよ', meaning: 'salary', category: 'n1' },
+        { word: '格差', reading: 'かくさ', meaning: 'gap', category: 'n1' },
+        { word: '貧困', reading: 'ひんこん', meaning: 'poverty', category: 'n1' },
+        { word: '成長', reading: 'せいちょう', meaning: 'growth', category: 'n1' },
+        { word: '発展', reading: 'はってん', meaning: 'development', category: 'n1' },
+        { word: '衰退', reading: 'すいたい', meaning: 'decline', category: 'n1' },
+        { word: '恐慌', reading: 'きょうこう', meaning: 'panic', category: 'n1' },
+        { word: '不況', reading: 'ふきょう', meaning: 'recession', category: 'n1' },
+        { word: '好況', reading: 'こうきょう', meaning: 'boom', category: 'n1' },
+        { word: '在庫', reading: 'ざいこ', meaning: 'inventory', category: 'n1' },
+        { word: '輸送', reading: 'ゆそう', meaning: 'transport', category: 'n1' },
+        { word: '保管', reading: 'ほかん', meaning: 'storage', category: 'n1' },
+        { word: '包装', reading: 'ほうそう', meaning: 'packaging', category: 'n1' },
+        { word: 'マーケティング', reading: 'マーケティング', meaning: 'marketing', category: 'n1' },
+        { word: '営業', reading: 'えいぎょう', meaning: 'sales', category: 'n1' },
+        { word: '発売', reading: 'はつばい', meaning: 'release', category: 'n1' },
+        { word: '割引', reading: 'わりびき', meaning: 'discount', category: 'n1' },
+        { word: '支払', reading: 'しはらい', meaning: 'payment', category: 'n1' },
+        { word: '決済', reading: 'けっさい', meaning: 'settlement', category: 'n1' },
+        { word: '取引', reading: 'とりひき', meaning: 'transaction', category: 'n1' },
+        { word: '委託', reading: 'いたく', meaning: 'commission', category: 'n1' },
+        { word: '独占', reading: 'どくせん', meaning: 'monopoly', category: 'n1' },
+        { word: '合併', reading: 'がっぺい', meaning: 'merger', category: 'n1' },
+        { word: '吸収', reading: 'きゅうしゅう', meaning: 'absorption', category: 'n1' },
+        { word: '統合', reading: 'とうごう', meaning: 'integration', category: 'n1' },
+        { word: '分離', reading: 'ぶんり', meaning: 'separation', category: 'n1' },
+        { word: '変遷', reading: 'へんせん', meaning: 'transition', category: 'n1' },
+        { word: '推移', reading: 'すいい', meaning: 'change', category: 'n1' },
+        { word: '進展', reading: 'しんてん', meaning: 'progress', category: 'n1' },
+        { word: '深化', reading: 'しんか', meaning: 'deepening', category: 'n1' },
+        { word: '浸透', reading: 'しんとう', meaning: 'permeation', category: 'n1' },
+        { word: '拡散', reading: 'かくさん', meaning: 'diffusion', category: 'n1' },
+        { word: '蔓延', reading: 'まんえん', meaning: 'spread', category: 'n1' },
+        { word: '波及', reading: 'はきゅう', meaning: 'influence', category: 'n1' },
+        { word: '刺激', reading: 'しげき', meaning: 'stimulus', category: 'n1' },
+        { word: '動機', reading: 'どうき', meaning: 'motivation', category: 'n1' },
+        { word: '起因', reading: 'きいん', meaning: 'cause', category: 'n1' },
+        { word: '根源', reading: 'こんげん', meaning: 'origin', category: 'n1' },
+        { word: '起源', reading: 'きげん', meaning: 'origin', category: 'n1' },
+        { word: '肯定的', reading: 'こうていてき', meaning: 'positive', category: 'n1' },
+        { word: '否定的', reading: 'ひていてき', meaning: 'negative', category: 'n1' },
+        { word: '相対的', reading: 'そうたいてき', meaning: 'relative', category: 'n1' },
+        { word: '絶対的', reading: 'ぜったいてき', meaning: 'absolute', category: 'n1' },
+        { word: '主観的', reading: 'しゅかんてき', meaning: 'subjective', category: 'n1' },
+        { word: '客観的', reading: 'きゃっかんてき', meaning: 'objective', category: 'n1' },
+        { word: '革新的', reading: 'かくしんてき', meaning: 'innovative', category: 'n1' },
+        { word: '保守的', reading: 'ほしゅてき', meaning: 'conservative', category: 'n1' },
+        { word: '漸進的', reading: 'ぜんしんてき', meaning: 'gradual', category: 'n1' },
+        { word: '根本的', reading: 'こんぽんてき', meaning: 'fundamental', category: 'n1' },
+        { word: '実践的', reading: 'じっせんてき', meaning: 'practical', category: 'n1' },
+        { word: '効率的', reading: 'こうりつてき', meaning: 'efficient', category: 'n1' },
+        { word: '象徴的', reading: 'しょうちょうてき', meaning: 'symbolic', category: 'n1' },
+        { word: '典型', reading: 'てんけい', meaning: 'typical', category: 'n1' },
+        { word: '規範', reading: 'きはん', meaning: 'standard', category: 'n1' },
+        { word: '基準', reading: 'きじゅん', meaning: 'criterion', category: 'n1' },
+        { word: '原型', reading: 'げんけい', meaning: 'prototype', category: 'n1' },
+        { word: '先例', reading: 'ぜんれい', meaning: 'precedent', category: 'n1' },
+        { word: '序列', reading: 'じょれつ', meaning: 'hierarchy', category: 'n1' },
+        { word: '地位', reading: 'ちい', meaning: 'status', category: 'n1' },
+        { word: '配置', reading: 'はいち', meaning: 'deployment', category: 'n1' },
+        { word: '配分', reading: 'はいぶん', meaning: 'allocation', category: 'n1' },
+        { word: '配送', reading: 'はいそう', meaning: 'delivery', category: 'n1' },
+        { word: '普及', reading: 'ふきゅう', meaning: 'diffusion', category: 'n1' },
+        { word: '伝染', reading: 'でんせん', meaning: 'contagion', category: 'n1' },
+        { word: '感染', reading: 'かんせん', meaning: 'infection', category: 'n1' },
+        { word: '帰結', reading: 'きけつ', meaning: 'conclusion', category: 'n1' },
+        { word: '成果', reading: 'せいか', meaning: 'result', category: 'n1' },
+        { word: '実績', reading: 'じっせき', meaning: 'achievement', category: 'n1' },
+        { word: '有効', reading: 'ゆうこう', meaning: 'effective', category: 'n1' },
+        { word: '無効', reading: 'むこう', meaning: 'invalid', category: 'n1' },
+        { word: '副作用', reading: 'ふくさよう', meaning: 'side effect', category: 'n1' },
+        { word: '報復', reading: 'ほうふく', meaning: 'revenge', category: 'n1' },
+        { word: '怨恨', reading: 'えんこん', meaning: 'grudge', category: 'n1' },
+        { word: '対立', reading: 'たいりつ', meaning: 'antagonism', category: 'n1' },
+        { word: '抗争', reading: 'こうそう', meaning: 'resistance', category: 'n1' },
+        { word: '矛盾', reading: 'むじゅん', meaning: 'inconsistency', category: 'n1' },
+        { word: '軋轢', reading: 'あつれき', meaning: 'friction', category: 'n1' },
+        { word: '相剋', reading: 'そうこく', meaning: 'antagonism', category: 'n1' },
+        { word: '連動', reading: 'れんどう', meaning: 'linkage', category: 'n1' },
+        { word: '共存', reading: 'きょうそん', meaning: 'coexistence', category: 'n1' },
+        { word: '共栄', reading: 'きょうえい', meaning: 'co-prosperity', category: 'n1' },
+        { word: '移行', reading: 'いこう', meaning: 'migration', category: 'n1' },
+        { word: '漂流', reading: 'ひょうりゅう', meaning: 'drifting', category: 'n1' },
+        { word: '流亡', reading: 'りゅうぼう', meaning: 'exile', category: 'n1' },
+        { word: '浪費', reading: 'ろうひ', meaning: 'waste', category: 'n1' },
+        { word: '成果', reading: 'せいか', meaning: 'outcome', category: 'n1' },
+        { word: '実り', reading: 'みのり', meaning: 'fruits', category: 'n1' },
+        { word: '成否', reading: 'せいひ', meaning: 'success/failure', category: 'n1' },
+        { word: '効力', reading: 'こうりょく', meaning: 'effect', category: 'n1' }
+      ];
+
+      return {
+        allCards: kotobaData.map(item => ({ ...item, flipped: false })),
+        filters: { n5: true, n4: true, n3: false, n2: false, n1: false },
+        layout: 'grid',
+        currentIndex: 0,
+
+        init() {
+          document.addEventListener('keydown', (e) => {
+            if (this.layout !== 'single') return;
+            if (e.key === 'ArrowLeft') this.prevCard();
+            if (e.key === 'ArrowRight') this.nextCard();
+          });
+        },
+
+        get cards() {
+          return this.allCards.filter(card => this.filters[card.category]);
+        },
+
+        get currentCard() {
+          return this.cards[this.currentIndex] || null;
+        },
+
+        get n5Count() { return this.allCards.filter(c => c.category === 'n5').length; },
+        get n4Count() { return this.allCards.filter(c => c.category === 'n4').length; },
+        get n3Count() { return this.allCards.filter(c => c.category === 'n3').length; },
+        get n2Count() { return this.allCards.filter(c => c.category === 'n2').length; },
+        get n1Count() { return this.allCards.filter(c => c.category === 'n1').length; },
+        
+        get flippedCount() {
+          return this.cards.filter(c => c.flipped).length;
+        },
+        
+        get allFlipped() {
+          return this.flippedCount === this.cards.length;
+        },
+
+        toggleFilter(filter) {
+          this.filters[filter] = !this.filters[filter];
+          this.currentIndex = 0;
+        },
+
+        flipCard(index) {
+          const card = this.cards[index];
+          card.flipped = !card.flipped;
+        },
+
+        toggleCurrentCard() {
+          if (this.currentCard) {
+            this.currentCard.flipped = !this.currentCard.flipped;
+          }
+        },
+
+        nextCard() {
+          if (this.currentIndex < this.cards.length - 1) {
+            this.currentIndex++;
+          } else {
+            this.currentIndex = 0;
+          }
+        },
+
+        prevCard() {
+          if (this.currentIndex > 0) {
+            this.currentIndex--;
+          } else {
+            this.currentIndex = this.cards.length - 1;
+          }
+        },
+        
+        shuffle() {
+          const visibleCards = this.cards;
+          for (let i = visibleCards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const cardI = visibleCards[i];
+            const cardJ = visibleCards[j];
+            const idxI = this.allCards.indexOf(cardI);
+            const idxJ = this.allCards.indexOf(cardJ);
+            [this.allCards[idxI], this.allCards[idxJ]] = [this.allCards[idxJ], this.allCards[idxI]];
+          }
+        },
+        
+        flipAll() {
+          const shouldFlip = !this.allFlipped;
+          this.cards.forEach(card => card.flipped = shouldFlip);
+        }
+      };
+    }
+  </script>
+  <a href="/" class="sticky bottom-0 block py-4 text-center bg-white/50 backdrop-blur-sm text-gray-700 font-medium">
+    ← Home
+  </a>
+</body>
+</html>

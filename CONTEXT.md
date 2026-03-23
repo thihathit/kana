@@ -70,6 +70,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ├── katakana.html       # Katakana flashcard application
 ├── combined.html       # Combined Hiragana + Katakana
 ├── kanji.html          # Kanji flashcard application (JLPT N5-N1)
+├── kotoba.html         # Vocabulary flashcard application (JLPT N5-N1)
 ├── lookalike.html      # Lookalike kanas - distinguish similar characters
 ├── download_from_edgetts.py   # Script to refresh audio files using Edge TTS
 ├── download_from_google.py    # Script to refresh audio files using Google TTS
@@ -107,6 +108,15 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - Card back shows reading + meaning
 - **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle, Sound/Reading Toggle
 
+### Kotoba (Vocabulary)
+- **500+ vocabulary words** from JLPT N5 to N1
+- Cards show Japanese word on front, reading + meaning on back
+- **Categories by JLPT level**: N5 (~70 words), N4 (~120 words), N3 (~90 words), N2 (~100 words), N1 (~120 words)
+- Default: N5 and N4 enabled
+- Cards are wider in grid view to fit words
+- **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle (Grid View / Single View)
+- Single view shows larger cards with word, reading, and meaning
+
 ### Lookalike Kanas
 - **28 lookalike pairs** of confusing character pairs
 - Cards show 2 similar characters on front, answers + tips on back
@@ -120,7 +130,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - Grid layout with sticky home button at bottom
 - Reduced side padding for better mobile readability
 - Larger card sizes with rounded padding
-- Color-coded by type: Hiragana (rose), Katakana (emerald), Kanji (amber), Combined (violet), Lookalike (orange)
+- Color-coded by type: Hiragana (rose), Katakana (emerald), Kanji (amber), Combined (violet), Kotoba (cyan), Lookalike (orange)
 - Gradient backgrounds
 - All pages vertically centered using CSS Grid
 
