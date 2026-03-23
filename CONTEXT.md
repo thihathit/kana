@@ -51,8 +51,8 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - **Sound mode (default)**: Shows 🔊 icon, clicking card plays native Japanese audio
 - **Text mode**: Shows romaji (hiragana/katakana) or reading (kanji), clicking card flips back to character
 - Small 🔄 flip icon at bottom center of card back in sound mode to flip back
-- **Voice Selection**: Dropdown to choose audio source (Google, Masaru, Keita, Nanami) - appears only in sound mode. Default: Masaru
-- Uses local pre-downloaded audio files from `google-tts/`, `edge-tts-masaru/`, `edge-tts-keita/`, or `edge-tts-nanami/` folders (no API calls)
+- **Voice Selection**: Dropdown to choose audio source (Nanami, Google, Keita) - appears only in sound mode. Default: Nanami
+- Uses local pre-downloaded audio files from `google-tts/`, `edge-tts-keita/`, or `edge-tts-nanami/` folders (no API calls)
 - In Single View, navigating to Prev/Next automatically plays audio when sound mode is on
 - Switching to sound mode in Single View also plays audio automatically
 - **Listen button** in Single View: 🔊 Listen button appears between Prev/Next controls (only in sound mode)
@@ -78,7 +78,6 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 │   ├── hiragana/       # 104 hiragana audio files
 │   ├── katakana/       # 104 katakana audio files
 │   └── kanji/          # Kanji reading audio files
-├── edge-tts-masaru/   # Edge TTS Masaru voice audio files
 ├── edge-tts-keita/    # Edge TTS Keita voice audio files
 ├── edge-tts-nanami/   # Edge TTS Nanami voice audio files
 └── CONTEXT.md         # This file
@@ -134,7 +133,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 6. Use Layout toggle to switch between grid/single view
 7. In Single view, use Prev/Next buttons to navigate (audio plays automatically in sound mode). Use the 🔊 Listen button to replay audio anytime.
 8. Toggle Sound/Text(Romaji or Reading) to switch between audio mode and text mode (not available on Lookalikes)
-9. In Sound mode, use the Voice dropdown to switch between Google, Masaru, Keita, or Nanami voices
+9. In Sound mode, use the Voice dropdown to switch between Nanami, Google, or Keita voices
 10. In Sound mode, click card back to play audio, click 🔄 to flip back
 11. In Single view, use Left/Right arrow keys to navigate, Spacebar to play audio
 

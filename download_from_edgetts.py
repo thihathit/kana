@@ -19,7 +19,6 @@ import edge_tts
 VOICES = [
     ("ja-JP-NanamiNeural", "nanami"),
     ("ja-JP-KeitaNeural", "keita"),
-    ("ja-JP-MasaruNeural", "masaru"),
 ]
 
 
