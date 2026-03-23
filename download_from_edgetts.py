@@ -38,15 +38,18 @@ async def generate_audio(text, filepath, voice):
     if os.path.exists(filepath):
         return None
 
-    try:
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
-        communicate = edge_tts.Communicate(text, voice)
-        await communicate.save(filepath)
-        return True
-    except Exception as e:
-        print(f"Error generating audio for '{text}': {e}")
+    communicate = edge_tts.Communicate(text, voice)
+    await communicate.save(filepath)
+
+    file_size = os.path.getsize(filepath)
+    if file_size < 1000:
+        os.remove(filepath)
+        print(f"Empty/short audio for '{text}' ({file_size} bytes), skipping")
         return False
+
+    return True
 
 
 async def main():
@@ -67,16 +70,21 @@ async def main():
             filepath = os.path.join(voice_output_dir, "hiragana", f"{h}.mp3")
             if i % 20 == 0 or i <= 5:
                 print(f"[{i}/{len(hiragana_list)}] Generating: {h}")
-            result = await generate_audio(h, filepath, voice_full)
-            if result is None:
-                h_skipped += 1
-            elif result:
-                h_count += 1
-                if i % 20 == 0 or i <= 5:
-                    print(f"  -> Saved: {filepath}")
-            else:
-                if i % 20 == 0 or i <= 5:
-                    print(f"  -> Failed: {h}")
+            try:
+                result = await generate_audio(h, filepath, voice_full)
+                if result is None:
+                    h_skipped += 1
+                elif result:
+                    h_count += 1
+                    if i % 20 == 0 or i <= 5:
+                        print(f"  -> Saved: {filepath}")
+                else:
+                    if i % 20 == 0 or i <= 5:
+                        print(f"  -> Failed: {h}")
+            except Exception as e:
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+                print(f"Error for '{h}': {e}")
         print(
             f"Done hiragana: {h_count} generated, {h_skipped} skipped (total {len(hiragana_list)})"
         )
@@ -89,16 +97,21 @@ async def main():
             filepath = os.path.join(voice_output_dir, "katakana", f"{k}.mp3")
             if i % 20 == 0 or i <= 5:
                 print(f"[{i}/{len(katakana_list)}] Generating: {k}")
-            result = await generate_audio(k, filepath, voice_full)
-            if result is None:
-                k_skipped += 1
-            elif result:
-                k_count += 1
-                if i % 20 == 0 or i <= 5:
-                    print(f"  -> Saved: {filepath}")
-            else:
-                if i % 20 == 0 or i <= 5:
-                    print(f"  -> Failed: {k}")
+            try:
+                result = await generate_audio(k, filepath, voice_full)
+                if result is None:
+                    k_skipped += 1
+                elif result:
+                    k_count += 1
+                    if i % 20 == 0 or i <= 5:
+                        print(f"  -> Saved: {filepath}")
+                else:
+                    if i % 20 == 0 or i <= 5:
+                        print(f"  -> Failed: {k}")
+            except Exception as e:
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+                print(f"Error for '{k}': {e}")
         print(
             f"Done katakana: {k_count} generated, {k_skipped} skipped (total {len(katakana_list)})"
         )
@@ -112,16 +125,21 @@ async def main():
             filepath = os.path.join(voice_output_dir, "kanji", f"{kj}.mp3")
             if i % 50 == 0 or i <= 5:
                 print(f"[{i}/{len(unique_kanji)}] Generating: {kj}")
-            result = await generate_audio(kj, filepath, voice_full)
-            if result is None:
-                c_skipped += 1
-            elif result:
-                c_count += 1
-                if i % 50 == 0 or i <= 5:
-                    print(f"  -> Saved: {filepath}")
-            else:
-                if i % 50 == 0 or i <= 5:
-                    print(f"  -> Failed: {kj}")
+            try:
+                result = await generate_audio(kj, filepath, voice_full)
+                if result is None:
+                    c_skipped += 1
+                elif result:
+                    c_count += 1
+                    if i % 50 == 0 or i <= 5:
+                        print(f"  -> Saved: {filepath}")
+                else:
+                    if i % 50 == 0 or i <= 5:
+                        print(f"  -> Failed: {kj}")
+            except Exception as e:
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+                print(f"Error for '{kj}': {e}")
         print(
             f"Done kanji: {c_count} generated, {c_skipped} skipped (total {len(unique_kanji)})"
         )
