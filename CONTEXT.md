@@ -51,7 +51,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - **Sound mode (default)**: Shows 🔊 icon, clicking card plays native Japanese audio
 - **Text mode**: Shows romaji (hiragana/katakana) or reading (kanji), clicking card flips back to character
 - Small 🔄 flip icon at bottom center of card back in sound mode to flip back
-- **Voice Selection**: Dropdown to choose audio source (Google, Masaru, Keita, Nanami) - appears only in sound mode
+- **Voice Selection**: Dropdown to choose audio source (Google, Masaru, Keita, Nanami) - appears only in sound mode. Default: Masaru
 - Uses local pre-downloaded audio files from `google-tts/`, `edge-tts-masaru/`, `edge-tts-keita/`, or `edge-tts-nanami/` folders (no API calls)
 - In Single View, navigating to Prev/Next automatically plays audio when sound mode is on
 - Switching to sound mode in Single View also plays audio automatically
