@@ -38,6 +38,15 @@
         <span x-show="showText">Romaji</span>
         <span x-show="!showText">Sound 🔊</span>
       </button>
+      <div x-show="!showText" class="relative inline-block">
+        <select x-model="selectedVoice" class="pl-3 pr-8 py-2 rounded-lg shadow bg-purple-600 text-white text-sm border-0 cursor-pointer appearance-none">
+          <option value="google-tts">Google</option>
+          <option value="edge-tts-masaru">Masaru</option>
+          <option value="edge-tts-keita">Keita</option>
+          <option value="edge-tts-nanami">Nanami</option>
+        </select>
+        <svg class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-white pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </div>
     </div>
 
     <div class="flex flex-wrap justify-center gap-1 sm:gap-2 mb-6">
@@ -171,6 +180,7 @@
         layout: 'grid',
         currentIndex: 0,
         showText: false,
+        selectedVoice: 'google-tts',
 
         init() {
           document.addEventListener('keydown', (e) => {
@@ -271,7 +281,7 @@
         playSoundFromCard(card) {
           if (!card) return;
           const filename = card.katakana + '.mp3';
-          const audioUrl = `google-tts/katakana/${filename}`;
+          const audioUrl = `${this.selectedVoice}/katakana/${filename}`;
           const audio = new Audio(audioUrl);
           audio.play().catch(err => console.log('Playback failed:', err));
         }
