@@ -11,7 +11,7 @@ import sys
 
 # Import the lists from character_lists.py (assumed to be in the same directory)
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from character_lists import hiragana_list, katakana_list, kanji_list
+from character_lists import hiragana_list, katakana_list, kanji_list, kotoba_list
 
 import edge_tts
 
@@ -143,12 +143,41 @@ async def main():
             f"Done kanji: {c_count} generated, {c_skipped} skipped (total {len(unique_kanji)})"
         )
 
+        # --- Kotoba ---
+        unique_kotoba = list(set(kotoba_list))
+        print(f"\n--- Generating Kotoba (unique count: {len(unique_kotoba)}) ---")
+        kw_count = 0
+        kw_skipped = 0
+        for i, kw in enumerate(unique_kotoba, 1):
+            filepath = os.path.join(voice_output_dir, "kotoba", f"{kw}.mp3")
+            if i % 50 == 0 or i <= 5:
+                print(f"[{i}/{len(unique_kotoba)}] Generating: {kw}")
+            try:
+                result = await generate_audio(kw, filepath, voice_full)
+                if result is None:
+                    kw_skipped += 1
+                elif result:
+                    kw_count += 1
+                    if i % 50 == 0 or i <= 5:
+                        print(f"  -> Saved: {filepath}")
+                else:
+                    if i % 50 == 0 or i <= 5:
+                        print(f"  -> Failed: {kw}")
+            except Exception as e:
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+                print(f"Error for '{kw}': {e}")
+        print(
+            f"Done kotoba: {kw_count} generated, {kw_skipped} skipped (total {len(unique_kotoba)})"
+        )
+
         print(f"\n=== Completed for voice: {voice_full} ===")
         print(f"Hiragana: {h_count} generated, {h_skipped} skipped")
         print(f"Katakana: {k_count} generated, {k_skipped} skipped")
         print(f"Kanji: {c_count} generated, {c_skipped} skipped")
+        print(f"Kotoba: {kw_count} generated, {kw_skipped} skipped")
         print(
-            f"Total for {voice_short}: {h_count + k_count + c_count} generated, {h_skipped + k_skipped + c_skipped} skipped"
+            f"Total for {voice_short}: {h_count + k_count + c_count + kw_count} generated, {h_skipped + k_skipped + c_skipped + kw_skipped} skipped"
         )
 
     print("\n=== Generation Complete for All Voices ===")

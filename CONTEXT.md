@@ -78,7 +78,8 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ├── google-tts/        # Google TTS audio files
 │   ├── hiragana/       # 104 hiragana audio files
 │   ├── katakana/       # 104 katakana audio files
-│   └── kanji/          # Kanji reading audio files
+│   ├── kanji/          # Kanji reading audio files
+│   └── kotoba/         # Kotoba vocabulary audio files
 ├── edge-tts-keita/    # Edge TTS Keita voice audio files
 ├── edge-tts-nanami/   # Edge TTS Nanami voice audio files
 └── CONTEXT.md         # This file
@@ -114,8 +115,9 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - **Categories by JLPT level**: N5 (~70 words), N4 (~120 words), N3 (~90 words), N2 (~100 words), N1 (~120 words)
 - Default: N5 and N4 enabled
 - Cards are wider in grid view to fit words
-- **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle (Grid View / Single View)
+- **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle, Sound/Reading Toggle
 - Single view shows larger cards with word, reading, and meaning
+- Audio files stored in `kotoba/` folder using vocabulary readings
 
 ### Lookalike Kanas
 - **28 lookalike pairs** of confusing character pairs
