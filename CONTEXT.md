@@ -51,7 +51,8 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - **Sound mode (default)**: Shows 🔊 icon, clicking card plays native Japanese audio
 - **Text mode**: Shows romaji (hiragana/katakana) or reading (kanji), clicking card flips back to character
 - Small 🔄 flip icon at bottom center of card back in sound mode to flip back
-- Uses local pre-downloaded audio files from `google-tts/` folder (no API calls)
+- **Voice Selection**: Dropdown to choose audio source (Google, Masaru, Keita, Nanami) - appears only in sound mode
+- Uses local pre-downloaded audio files from `google-tts/`, `edge-tts-masaru/`, `edge-tts-keita/`, or `edge-tts-nanami/` folders (no API calls)
 - In Single View, navigating to Prev/Next automatically plays audio when sound mode is on
 - Switching to sound mode in Single View also plays audio automatically
 - **Listen button** in Single View: 🔊 Listen button appears between Prev/Next controls (only in sound mode)
@@ -70,12 +71,16 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ├── combined.html       # Combined Hiragana + Katakana
 ├── kanji.html          # Kanji flashcard application (JLPT N5-N1)
 ├── lookalike.html      # Lookalike kanas - distinguish similar characters
+├── download_from_edgetts.py   # Script to refresh audio files using Edge TTS
 ├── download_from_google.py    # Script to refresh audio files using Google TTS
 ├── character_lists.py         # Shared character lists for download scripts
-├── google-tts/        # Local audio files (run download scripts to refresh)
+├── google-tts/        # Google TTS audio files
 │   ├── hiragana/       # 104 hiragana audio files
 │   ├── katakana/       # 104 katakana audio files
-│   └── kanji/          # 661 kanji reading audio files
+│   └── kanji/          # Kanji reading audio files
+├── edge-tts-masaru/   # Edge TTS Masaru voice audio files
+├── edge-tts-keita/    # Edge TTS Keita voice audio files
+├── edge-tts-nanami/   # Edge TTS Nanami voice audio files
 └── CONTEXT.md         # This file
 ```
 
@@ -129,8 +134,9 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 6. Use Layout toggle to switch between grid/single view
 7. In Single view, use Prev/Next buttons to navigate (audio plays automatically in sound mode). Use the 🔊 Listen button to replay audio anytime.
 8. Toggle Sound/Text(Romaji or Reading) to switch between audio mode and text mode (not available on Lookalikes)
-9. In Sound mode, click card back to play audio, click 🔄 to flip back
-10. In Single view, use Left/Right arrow keys to navigate, Spacebar to play audio
+9. In Sound mode, use the Voice dropdown to switch between Google, Masaru, Keita, or Nanami voices
+10. In Sound mode, click card back to play audio, click 🔄 to flip back
+11. In Single view, use Left/Right arrow keys to navigate, Spacebar to play audio
 
 ## Future Enhancements (Potential)
 - Add progress tracking
