@@ -112,11 +112,14 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ### Kotoba (Vocabulary)
 - **500+ vocabulary words** from JLPT N5 to N1
 - Cards show Japanese word on front, reading + meaning on back
+- Card back displays: kanji (word), reading (hiragana), meaning (English)
 - **Categories by JLPT level**: N5 (~70 words), N4 (~120 words), N3 (~90 words), N2 (~100 words), N1 (~120 words)
 - Default: N5 and N4 enabled
 - Cards are wider in grid view to fit words
-- **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle, Sound/Reading Toggle
-- Single view shows larger cards with word, reading, and meaning
+- **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle, Voice Selector (always visible)
+- Grid view: listen button on card back plays audio
+- Single view: 🔊 Listen button always visible in navigation
+- Click any card to flip; use Listen button to play audio
 - Audio files stored in `kotoba/` folder using vocabulary readings
 
 ### Lookalike Kanas
@@ -143,11 +146,10 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 4. Use Flip All to reveal all answers
 5. Toggle category buttons to filter characters (not available on Lookalikes)
 6. Use Layout toggle to switch between grid/single view
-7. In Single view, use Prev/Next buttons to navigate (audio plays automatically in sound mode). Use the 🔊 Listen button to replay audio anytime.
-8. Toggle Sound/Text(Romaji or Reading) to switch between audio mode and text mode (not available on Lookalikes)
-9. In Sound mode, use the Voice dropdown to switch between Nanami, Google, or Keita voices
-10. In Sound mode, click card back to play audio, click 🔄 to flip back
-11. In Single view, use Left/Right arrow keys to navigate, Spacebar to play audio
+7. In Single view, use Prev/Next buttons to navigate. Use the 🔊 Listen button to play audio anytime.
+8. Toggle Sound/Text(Romaji or Reading) to switch between audio mode and text mode (not available on Lookalikes or Kotoba)
+9. Use the Voice dropdown to switch between Nanami, Google, or Keita voices
+10. In Single view, use Left/Right arrow keys to navigate
 
 ## Future Enhancements (Potential)
 - Add progress tracking
