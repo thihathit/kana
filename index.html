@@ -5,53 +5,127 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Japanese Flashcards</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F7F6F3;
+      --surface: #FFFFFF;
+      --border: #EAEAEA;
+      --text: #111111;
+      --text-secondary: #787774;
+      --accent-pale-red: #FDEBEC;
+      --accent-red: #9F2F2D;
+    }
+    body {
+      background-color: var(--bg);
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+    }
+    .font-serif {
+      font-family: 'Instrument Serif', Georgia, serif;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transform: translateY(-2px);
+    }
+    .btn {
+      background: var(--text);
+      color: white;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      background: #333333;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .tag {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 9999px;
+      padding: 2px 8px;
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-in {
+      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-violet-50 to-fuchsia-100 min-h-screen">
-  <div class="min-h-screen flex flex-col items-center justify-center px-2 py-8 sm:px-4">
-    <div class="text-center mb-8 sm:mb-12">
-      <h1 class="text-3xl sm:text-5xl font-bold text-gray-800 mb-2 sm:mb-4">Japanese Flashcards</h1>
-      <p class="text-base sm:text-xl text-gray-600">Choose a script to practice</p>
-    </div>
-
-    <div class="flex flex-wrap justify-center gap-2 sm:gap-6 max-w-5xl px-2">
-      <a href="combined.html" class="block w-28 sm:w-44 bg-white rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border-4 border-violet-200 flex flex-col items-center justify-center p-2 sm:p-4">
-        <span class="text-3xl sm:text-5xl text-violet-500 mb-1 sm:mb-3">あア</span>
-        <span class="text-sm sm:text-xl font-semibold text-gray-700">Combined</span>
-        <span class="text-xs sm:text-sm text-gray-500 mt-1">208 characters</span>
-      </a>
-
-      <a href="hiragana.html" class="block w-28 sm:w-44 bg-white rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border-4 border-rose-200 flex flex-col items-center justify-center p-2 sm:p-4">
-        <span class="text-3xl sm:text-5xl text-rose-500 mb-1 sm:mb-3">あ</span>
-        <span class="text-sm sm:text-xl font-semibold text-gray-700">Hiragana</span>
-        <span class="text-xs sm:text-sm text-gray-500 mt-1">104 characters</span>
-      </a>
-
-      <a href="katakana.html" class="block w-28 sm:w-44 bg-white rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border-4 border-emerald-200 flex flex-col items-center justify-center p-2 sm:p-4">
-        <span class="text-3xl sm:text-5xl text-emerald-500 mb-1 sm:mb-3">ア</span>
-        <span class="text-sm sm:text-xl font-semibold text-gray-700">Katakana</span>
-        <span class="text-xs sm:text-sm text-gray-500 mt-1">104 characters</span>
-      </a>
-
-      <a href="kanji.html" class="block w-28 sm:w-44 bg-white rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border-4 border-amber-200 flex flex-col items-center justify-center p-2 sm:p-4">
-        <span class="text-3xl sm:text-5xl text-amber-500 mb-1 sm:mb-3">漢</span>
-        <span class="text-sm sm:text-xl font-semibold text-gray-700">Kanji</span>
-        <span class="text-xs sm:text-sm text-gray-500 mt-1">JLPT N5-N1</span>
-      </a>
-
-      <a href="lookalike.html" class="block w-28 sm:w-44 bg-white rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border-4 border-orange-200 flex flex-col items-center justify-center p-2 sm:p-4 relative">
-        <span class="absolute top-1 right-1 text-xs px-2 py-0.5 bg-yellow-400 text-yellow-800 rounded-full font-bold">BETA</span>
-        <span class="text-2xl sm:text-4xl text-orange-500 mb-1 sm:mb-3">き≠ち</span>
-        <span class="text-sm sm:text-xl font-semibold text-gray-700">Lookalikes</span>
-        <span class="text-xs sm:text-sm text-gray-500 mt-1">Similar kanas</span>
-      </a>
-
-      <a href="kotoba.html" class="block w-28 sm:w-44 bg-white rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 border-4 border-cyan-200 flex flex-col items-center justify-center p-2 sm:p-4 relative">
-        <span class="absolute top-1 right-1 text-xs px-2 py-0.5 bg-yellow-400 text-yellow-800 rounded-full font-bold">BETA</span>
-        <span class="text-3xl sm:text-5xl text-cyan-500 mb-1 sm:mb-3">言葉</span>
-        <span class="text-sm sm:text-xl font-semibold text-gray-700">Kotoba</span>
-        <span class="text-xs sm:text-sm text-gray-500 mt-1">JLPT Vocabulary</span>
-      </a>
-    </div>
+<body class="min-h-screen flex flex-col">
+  <div class="fixed inset-0 pointer-events-none" style="opacity: 0.03;">
+    <div class="absolute top-1/4 -left-32 w-96 h-96 bg-amber-400 rounded-full blur-3xl animate-pulse" style="animation-duration: 20s;"></div>
+    <div class="absolute bottom-1/4 -right-32 w-96 h-96 bg-rose-300 rounded-full blur-3xl animate-pulse" style="animation-duration: 25s;"></div>
   </div>
+
+  <main class="flex-1 flex flex-col items-center justify-center px-4 sm:px-8 py-16 sm:py-24">
+    <header class="text-center mb-12 sm:mb-20 animate-in" style="animation-delay: 0ms;">
+      <h1 class="font-serif text-4xl sm:text-6xl text-[#111111] tracking-tight mb-3">Japanese Flashcards</h1>
+      <p class="text-[#787774] text-base sm:text-lg">Select a script to begin practicing</p>
+    </header>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 max-w-3xl w-full animate-in" style="animation-delay: 100ms;">
+      <a href="combined.html" class="card group flex flex-col items-center justify-center p-6 sm:p-10 cursor-pointer">
+        <span class="text-4xl sm:text-6xl text-[#111111] mb-2 sm:mb-4 leading-none">あア</span>
+        <span class="text-sm sm:text-base font-medium text-[#111111]">Combined</span>
+        <span class="text-xs text-[#787774] mt-1">208 pairs</span>
+      </a>
+
+      <a href="hiragana.html" class="card group flex flex-col items-center justify-center p-6 sm:p-10 cursor-pointer">
+        <span class="text-4xl sm:text-6xl text-[#111111] mb-2 sm:mb-4 leading-none">あ</span>
+        <span class="text-sm sm:text-base font-medium text-[#111111]">Hiragana</span>
+        <span class="text-xs text-[#787774] mt-1">103 characters</span>
+      </a>
+
+      <a href="katakana.html" class="card group flex flex-col items-center justify-center p-6 sm:p-10 cursor-pointer">
+        <span class="text-4xl sm:text-6xl text-[#111111] mb-2 sm:mb-4 leading-none">ア</span>
+        <span class="text-sm sm:text-base font-medium text-[#111111]">Katakana</span>
+        <span class="text-xs text-[#787774] mt-1">103 characters</span>
+      </a>
+
+      <a href="kanji.html" class="card group flex flex-col items-center justify-center p-6 sm:p-10 cursor-pointer">
+        <span class="text-4xl sm:text-6xl text-[#111111] mb-2 sm:mb-4 leading-none">漢</span>
+        <span class="text-sm sm:text-base font-medium text-[#111111]">Kanji</span>
+        <span class="text-xs text-[#787774] mt-1">JLPT N5 - N1</span>
+      </a>
+
+      <a href="lookalike.html" class="card group flex flex-col items-center justify-center p-6 sm:p-10 cursor-pointer relative">
+        <span class="absolute top-3 right-3 tag bg-[#FBF3DB] text-[#956400]">Beta</span>
+        <span class="text-3xl sm:text-5xl text-[#111111] mb-2 sm:mb-4 leading-none">き≠ち</span>
+        <span class="text-sm sm:text-base font-medium text-[#111111]">Lookalikes</span>
+        <span class="text-xs text-[#787774] mt-1">Similar kanas</span>
+      </a>
+
+      <a href="kotoba.html" class="card group flex flex-col items-center justify-center p-6 sm:p-10 cursor-pointer relative">
+        <span class="absolute top-3 right-3 tag bg-[#FBF3DB] text-[#956400]">Beta</span>
+        <span class="text-4xl sm:text-6xl text-[#111111] mb-2 sm:mb-4 leading-none">言葉</span>
+        <span class="text-sm sm:text-base font-medium text-[#111111]">Kotoba</span>
+        <span class="text-xs text-[#787774] mt-1">JLPT Vocabulary</span>
+      </a>
+    </div>
+
+    <footer class="mt-16 sm:mt-24 text-center animate-in" style="animation-delay: 200ms;">
+      <p class="text-xs text-[#787774]">Use arrow keys to navigate in single view</p>
+    </footer>
+  </main>
 </body>
 </html>

@@ -6,89 +6,108 @@
   <title>Kotoba Flashcards</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Instrument+Serif&display=swap" rel="stylesheet">
   <style>
+    :root { --bg: #F7F6F3; --surface: #FFFFFF; --border: #EAEAEA; --text: #111111; --text-secondary: #787774; }
+    body { background-color: var(--bg); font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--text); }
+    .font-serif { font-family: 'Instrument Serif', Georgia, serif; }
     [x-cloak] { display: none !important; }
     .perspective-1000 { perspective: 1000px; }
     .transform-style-3d { transform-style: preserve-3d; }
     .backface-hidden { backface-visibility: hidden; }
     .rotate-y-180 { transform: rotateY(180deg); }
+    .btn { background: var(--text); color: white; border-radius: 6px; transition: all 0.2s ease; }
+    .btn:hover { background: #333333; }
+    .btn:active { transform: scale(0.98); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; transition: all 0.2s ease; }
+    .btn-outline:hover { background: var(--surface); border-color: #999; }
+    .card-flash { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; transition: box-shadow 0.2s ease; }
+    .card-flash:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .card-back { background: var(--surface); border: 1px solid var(--border); }
+    .tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; border-radius: 9999px; padding: 3px 10px; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
   </style>
 </head>
-<body class="bg-gradient-to-br from-cyan-50 to-teal-100 min-h-screen grid grid-rows-[1fr_auto]" x-data="kotobaApp()" x-init="init()">
+<body class="min-h-screen grid grid-rows-[1fr_auto]" x-data="kotobaApp()" x-init="init()">
+  <div class="fixed inset-0 pointer-events-none" style="opacity: 0.02;">
+    <div class="absolute top-1/4 -left-32 w-96 h-96 bg-cyan-400 rounded-full blur-3xl animate-pulse" style="animation-duration: 20s;"></div>
+    <div class="absolute bottom-1/4 -right-32 w-96 h-96 bg-teal-300 rounded-full blur-3xl animate-pulse" style="animation-duration: 25s;"></div>
+  </div>
   <div class="container mx-auto px-2 py-6 sm:px-4 sm:py-8 w-full flex flex-col justify-center">
     <div x-show="!loaded" class="text-center py-20">
       <p class="text-gray-600 text-lg">Loading vocabulary...</p>
     </div>
     <div x-show="loaded" x-cloak>
-    <div class="text-center mb-6 sm:mb-8">
-      <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
-        Kotoba Flashcards
-        <span class="text-xs px-2 py-1 bg-yellow-400 text-yellow-800 rounded-full font-bold">BETA</span>
+    <header class="text-center mb-8 sm:mb-12 animate-in">
+      <h1 class="font-serif text-3xl sm:text-5xl text-[#111111] tracking-tight mb-2 flex items-center justify-center gap-2">
+        Kotoba
+        <span class="tag bg-[#FBF3DB] text-[#956400]">Beta</span>
       </h1>
-      <p class="text-gray-600 text-sm sm:text-base">Click a card to flip • <span x-text="flippedCount"></span> / <span x-text="cards.length"></span> flipped</p>
+      <p class="text-[#787774] text-sm sm:text-base"><span x-text="flippedCount"></span> / <span x-text="cards.length"></span> revealed</p>
+    </header>
+
+    <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 animate-in" style="animation-delay: 100ms;">
+      <button @click="shuffle()" class="btn px-4 sm:px-6 py-2 text-sm font-medium">Shuffle</button>
+      <button @click="flipAll()" class="btn px-4 sm:px-6 py-2 text-sm font-medium">
+        <span x-show="!allFlipped">Reveal All</span>
+        <span x-show="allFlipped">Hide All</span>
+      </button>
+      <button @click="layout = layout === 'grid' ? 'single' : 'grid'" class="btn px-4 sm:px-6 py-2 text-sm font-medium">
+        <span x-show="layout === 'grid'">Single</span>
+        <span x-show="layout === 'single'">Grid</span>
+      </button>
+      <button @click="cycleVoice()" class="btn px-3 py-2 text-sm font-medium">
+        <span x-text="voiceLabel"></span>
+      </button>
     </div>
 
-    <div class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6">
-      <button @click="shuffle()" class="px-4 sm:px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
-        Shuffle
-      </button>
-      <button @click="flipAll()" class="px-4 sm:px-6 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
-        <span x-show="!allFlipped">Flip All</span>
-        <span x-show="allFlipped">Unflip All</span>
-      </button>
-      <button @click="layout = layout === 'grid' ? 'single' : 'grid'" class="px-4 sm:px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
-        <span x-show="layout === 'grid'">Single View</span>
-        <span x-show="layout === 'single'">Grid View</span>
-      </button>
-      <button @click="cycleVoice()" class="px-4 py-2 rounded-lg shadow bg-purple-600 hover:bg-purple-700 text-white text-sm">
-        <span x-text="voiceLabel"></span> ↻
-      </button>
-    </div>
-
-    <div class="flex flex-wrap justify-center gap-1 sm:gap-2 mb-6">
+    <div class="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-8 animate-in" style="animation-delay: 150ms;">
       <button @click="toggleFilter('n5')" 
-              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
-              :class="filters.n5 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+              class="tag transition-colors"
+              :class="filters.n5 ? 'bg-[#111111] text-white' : 'bg-[#EAEAEA] text-[#787774]'">
         N5 <span x-text="n5Count"></span>
       </button>
       <button @click="toggleFilter('n4')" 
-              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
-              :class="filters.n4 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+              class="tag transition-colors"
+              :class="filters.n4 ? 'bg-[#111111] text-white' : 'bg-[#EAEAEA] text-[#787774]'">
         N4 <span x-text="n4Count"></span>
       </button>
       <button @click="toggleFilter('n3')" 
-              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
-              :class="filters.n3 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+              class="tag transition-colors"
+              :class="filters.n3 ? 'bg-[#111111] text-white' : 'bg-[#EAEAEA] text-[#787774]'">
         N3 <span x-text="n3Count"></span>
       </button>
       <button @click="toggleFilter('n2')" 
-              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
-              :class="filters.n2 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+              class="tag transition-colors"
+              :class="filters.n2 ? 'bg-[#111111] text-white' : 'bg-[#EAEAEA] text-[#787774]'">
         N2 <span x-text="n2Count"></span>
       </button>
       <button @click="toggleFilter('n1')" 
-              class="px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow transition-colors text-xs sm:text-sm"
-              :class="filters.n1 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'">
+              class="tag transition-colors"
+              :class="filters.n1 ? 'bg-[#111111] text-white' : 'bg-[#EAEAEA] text-[#787774]'">
         N1 <span x-text="n1Count"></span>
       </button>
     </div>
 
     <div class="flex flex-wrap justify-center gap-3 sm:gap-4" x-show="layout === 'grid'">
       <template x-for="(card, index) in cards" :key="index">
-        <div class="perspective-1000 w-36 h-44 sm:w-48 sm:h-56 cursor-pointer" @click="flipCard(index)">
+        <div class="perspective-1000 w-44 h-48 sm:w-48 sm:h-56 cursor-pointer" @click="flipCard(index)">
           <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
                :class="card.flipped ? 'rotate-y-180' : ''">
-            
-            <div class="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex flex-col items-center justify-center border-2 border-gray-300 p-2 sm:p-3">
-              <span class="text-xl sm:text-2xl text-gray-800 text-center leading-tight" x-text="card.word"></span>
-              <span class="text-xs text-gray-400 mt-2 uppercase" x-text="card.category"></span>
+             
+            <div class="absolute w-full h-full backface-hidden card-flash flex flex-col items-center justify-center p-2 sm:p-3">
+              <span class="text-xl sm:text-2xl text-[#111111] text-center leading-tight" x-text="card.word"></span>
+              <span class="text-xs text-[#787774] mt-2 uppercase" x-text="card.category"></span>
             </div>
             
-            <div class="absolute w-full h-full backface-hidden rounded-xl shadow-lg flex flex-col items-center justify-center border-2 rotate-y-180 bg-cyan-600 border-cyan-400 p-2 sm:p-3">
-              <span class="text-lg sm:text-xl text-white font-semibold text-center leading-tight" x-text="card.word"></span>
-              <span class="text-sm sm:text-base mt-1 text-cyan-200 text-center" x-text="card.reading"></span>
-              <span class="text-base sm:text-lg mt-2 text-cyan-100 text-center" x-text="card.meaning"></span>
-              <button @click.stop="playSound(card)" class="mt-2 px-3 py-1 bg-white/20 hover:bg-white/30 text-white text-sm rounded-lg transition-colors">🔊 Listen</button>
+            <div class="absolute w-full h-full backface-hidden card-back rounded-xl flex flex-col items-center justify-center p-2 sm:p-3 rotate-y-180">
+              <span class="text-lg sm:text-xl font-semibold text-[#111111] text-center leading-tight" x-text="card.word"></span>
+              <span class="text-sm sm:text-base mt-1 text-[#787774] text-center" x-text="card.reading"></span>
+              <span class="text-base sm:text-lg mt-2 text-[#111111] text-center" x-text="card.meaning"></span>
+              <button @click.stop="playSound(card)" class="mt-2 px-3 py-1 bg-[#111111] text-white text-sm rounded transition-colors">Listen</button>
             </div>
             
           </div>
@@ -97,37 +116,40 @@
     </div>
 
     <div x-show="layout === 'single'" x-cloak class="flex flex-col items-center">
-      <div class="perspective-1000 w-full max-w-md cursor-pointer mb-6" @click="toggleCurrentCard()">
+      <div class="perspective-1000 w-full max-w-md cursor-pointer mb-8" @click="toggleCurrentCard()">
         <div class="transform-style-3d w-full h-48 sm:h-56 relative transition-transform duration-300" 
              :class="currentCard?.flipped ? 'rotate-y-180' : ''">
           
-          <div class="absolute w-full h-full backface-hidden bg-white rounded-2xl shadow-2xl flex flex-col items-center justify-center border-4 border-gray-300 p-4 sm:p-6">
-            <span class="text-4xl sm:text-5xl text-gray-800 text-center leading-tight" x-text="currentCard?.word"></span>
-            <span class="text-sm text-gray-400 mt-4 uppercase" x-text="currentCard?.category"></span>
+          <div class="absolute w-full h-full backface-hidden card-flash flex flex-col items-center justify-center p-4 sm:p-6">
+            <span class="text-4xl sm:text-5xl text-[#111111] text-center leading-tight" x-text="currentCard?.word"></span>
+            <span class="text-sm text-[#787774] mt-4 uppercase" x-text="currentCard?.category"></span>
           </div>
           
-          <div class="absolute w-full h-full backface-hidden rounded-2xl shadow-2xl flex flex-col items-center justify-center border-4 rotate-y-180 bg-cyan-600 border-cyan-400 p-4 sm:p-6">
-            <span class="text-3xl sm:text-4xl text-white font-semibold text-center leading-tight" x-text="currentCard?.word"></span>
-            <span class="text-xl sm:text-2xl mt-1 text-cyan-200 text-center" x-text="currentCard?.reading"></span>
-            <span class="text-lg sm:text-xl text-center mt-3 text-cyan-100" x-text="currentCard?.meaning"></span>
+          <div class="absolute w-full h-full backface-hidden card-back rounded-2xl flex flex-col items-center justify-center p-4 sm:p-6 rotate-y-180">
+            <span class="text-3xl sm:text-4xl font-semibold text-[#111111] text-center leading-tight" x-text="currentCard?.word"></span>
+            <span class="text-xl sm:text-2xl mt-1 text-[#787774] text-center" x-text="currentCard?.reading"></span>
+            <span class="text-lg sm:text-xl text-center mt-3 text-[#111111]" x-text="currentCard?.meaning"></span>
           </div>
           
         </div>
       </div>
       
-      <div class="flex flex-col items-center gap-2">
-        <div class="flex items-center gap-4">
-          <button @click="prevCard()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition-colors text-lg">
-            ← Prev
+      <div class="flex flex-col items-center gap-4">
+        <div class="flex items-center gap-3 sm:gap-4">
+          <button @click="prevCard()" class="btn-outline px-5 py-2.5 text-sm font-medium">
+            <svg class="w-4 h-4 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Prev
           </button>
-          <button @click="playSound(currentCard)" class="px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow transition-colors text-lg">
-            🔊 Listen
+          <button @click="playSound(currentCard)" class="btn px-6 py-2.5 text-sm font-medium">
+            <svg class="w-4 h-4 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            Listen
           </button>
-          <button @click="nextCard()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition-colors text-lg">
-            Next →
+          <button @click="nextCard()" class="btn-outline px-5 py-2.5 text-sm font-medium">
+            Next
+            <svg class="w-4 h-4 inline ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
           </button>
         </div>
-        <span class="text-gray-600 font-medium" x-text="(currentIndex + 1) + ' / ' + cards.length"></span>
+        <span class="text-xs text-[#787774] font-mono" x-text="(currentIndex + 1) + ' / ' + cards.length"></span>
       </div>
     </div>
     </div>
@@ -263,8 +285,11 @@
       };
     }
   </script>
-  <a href="/" class="sticky bottom-0 block py-4 text-center bg-white/50 backdrop-blur-sm text-gray-700 font-medium">
-    ← Home
+  <a href="index.html" class="sticky bottom-0 block py-4 text-center bg-[#F7F6F3]/80 backdrop-blur-sm text-[#787774] font-medium border-t border-[#EAEAEA]">
+    <span class="inline-flex items-center gap-2">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path name="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Home
+    </span>
   </a>
 </body>
 </html>

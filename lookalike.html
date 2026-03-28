@@ -6,62 +6,80 @@
   <title>Lookalike Kanas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Instrument+Serif&display=swap" rel="stylesheet">
   <style>
+    :root { --bg: #F7F6F3; --surface: #FFFFFF; --border: #EAEAEA; --text: #111111; --text-secondary: #787774; }
+    body { background-color: var(--bg); font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--text); }
+    .font-serif { font-family: 'Instrument Serif', Georgia, serif; }
     [x-cloak] { display: none !important; }
     .perspective-1000 { perspective: 1000px; }
     .transform-style-3d { transform-style: preserve-3d; }
     .backface-hidden { backface-visibility: hidden; }
     .rotate-y-180 { transform: rotateY(180deg); }
+    .btn { background: var(--text); color: white; border-radius: 6px; transition: all 0.2s ease; }
+    .btn:hover { background: #333333; }
+    .btn:active { transform: scale(0.98); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; transition: all 0.2s ease; }
+    .btn-outline:hover { background: var(--surface); border-color: #999; }
+    .card-flash { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; transition: box-shadow 0.2s ease; }
+    .card-flash:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .card-back { background: var(--surface); border: 1px solid var(--border); }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
   </style>
 </head>
-<body class="bg-gradient-to-br from-orange-50 to-red-100 min-h-screen grid grid-rows-[1fr_auto]" x-data="lookalikeApp()">
-  <div class="container mx-auto px-2 py-6 sm:px-4 sm:py-8 w-full flex flex-col justify-center">
-    <div class="text-center mb-6 sm:mb-8">
-      <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
-        Lookalike Kanas
-        <span class="text-xs px-2 py-1 bg-yellow-400 text-yellow-800 rounded-full font-bold">BETA</span>
+<body class="min-h-screen grid grid-rows-[1fr_auto]" x-data="lookalikeApp()">
+  <div class="fixed inset-0 pointer-events-none" style="opacity: 0.02;">
+    <div class="absolute top-1/4 -left-32 w-96 h-96 bg-orange-400 rounded-full blur-3xl animate-pulse" style="animation-duration: 20s;"></div>
+    <div class="absolute bottom-1/4 -right-32 w-96 h-96 bg-red-300 rounded-full blur-3xl animate-pulse" style="animation-duration: 25s;"></div>
+  </div>
+  <div class="container mx-auto px-3 py-6 sm:px-6 sm:py-10 w-full flex flex-col justify-center">
+    <header class="text-center mb-8 sm:mb-12 animate-in">
+      <h1 class="font-serif text-3xl sm:text-5xl text-[#111111] tracking-tight mb-2 flex items-center justify-center gap-2">
+        Lookalikes
+        <span class="tag bg-[#FBF3DB] text-[#956400]">Beta</span>
       </h1>
-      <p class="text-gray-600 text-sm sm:text-base">Can you tell these apart? • <span x-text="flippedCount"></span> / <span x-text="cards.length"></span> revealed</p>
-    </div>
+      <p class="text-[#787774] text-sm sm:text-base"><span x-text="flippedCount"></span> / <span x-text="cards.length"></span> revealed</p>
+    </header>
 
-    <div class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6">
-      <button @click="shuffle()" class="px-4 sm:px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
-        Shuffle
-      </button>
-      <button @click="flipAll()" class="px-4 sm:px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
+    <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 animate-in" style="animation-delay: 100ms;">
+      <button @click="shuffle()" class="btn px-4 sm:px-6 py-2 text-sm font-medium">Shuffle</button>
+      <button @click="flipAll()" class="btn px-4 sm:px-6 py-2 text-sm font-medium">
         <span x-show="!allFlipped">Reveal All</span>
         <span x-show="allFlipped">Hide All</span>
       </button>
-      <button @click="layout = layout === 'grid' ? 'single' : 'grid'" class="px-4 sm:px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition-colors text-sm sm:text-base">
-        <span x-show="layout === 'grid'">Single View</span>
-        <span x-show="layout === 'single'">Grid View</span>
+      <button @click="layout = layout === 'grid' ? 'single' : 'grid'" class="btn px-4 sm:px-6 py-2 text-sm font-medium">
+        <span x-show="layout === 'grid'">Single</span>
+        <span x-show="layout === 'single'">Grid</span>
       </button>
     </div>
 
     <div class="flex flex-wrap justify-center gap-3 sm:gap-4" x-show="layout === 'grid'">
       <template x-for="(card, index) in cards" :key="index">
-        <div class="perspective-1000 w-24 h-32 sm:w-32 sm:h-40 cursor-pointer" @click="flipCard(index)">
+        <div class="perspective-1000 w-32 sm:w-32 sm:h-40 cursor-pointer" @click="flipCard(index)">
           <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
                :class="card.flipped ? 'rotate-y-180' : ''">
-            
-            <div class="absolute w-full h-full backface-hidden bg-white rounded-xl shadow-lg flex items-center justify-center border-2 border-gray-300 p-2">
+             
+            <div class="absolute w-full h-full backface-hidden card-flash flex items-center justify-center p-2">
               <div class="flex justify-center items-center gap-1 sm:gap-2">
                 <template x-for="(item, i) in card.chars" :key="i">
-                  <span class="text-4xl sm:text-5xl text-gray-800" x-text="item.char"></span>
+                  <span class="text-4xl sm:text-5xl text-[#111111]" x-text="item.char"></span>
                 </template>
               </div>
             </div>
             
-            <div class="absolute w-full h-full backface-hidden bg-gradient-to-br from-orange-500 to-red-500 rounded-xl shadow-lg flex flex-col items-center justify-center border-2 border-orange-300 rotate-y-180 p-2">
+            <div class="absolute w-full h-full backface-hidden card-back rounded-xl flex flex-col items-center justify-center rotate-y-180 p-2">
               <div class="flex justify-center items-center gap-2 sm:gap-3 mb-2">
                 <template x-for="(item, i) in card.chars" :key="i">
                   <div class="flex flex-col items-center">
-                    <span class="text-2xl sm:text-3xl text-white font-bold" x-text="item.char"></span>
-                    <span class="text-xs text-white/80" x-text="item.romaji"></span>
+                    <span class="text-2xl sm:text-3xl font-bold text-[#111111]" x-text="item.char"></span>
+                    <span class="text-xs text-[#787774]" x-text="item.romaji"></span>
                   </div>
                 </template>
               </div>
-              <span class="text-xs text-white/70 text-center" x-text="card.tip"></span>
+              <span class="text-xs text-[#787774] text-center" x-text="card.tip"></span>
             </div>
             
           </div>
@@ -70,44 +88,52 @@
     </div>
 
     <div x-show="layout === 'single'" x-cloak class="flex flex-col items-center">
-      <div class="perspective-1000 w-64 h-72 sm:w-80 sm:h-96 cursor-pointer mb-6" @click="toggleCurrentCard()">
+      <div class="perspective-1000 w-64 h-72 sm:w-80 sm:h-96 cursor-pointer mb-8" @click="toggleCurrentCard()">
         <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
              :class="currentCard?.flipped ? 'rotate-y-180' : ''">
-          
-          <div class="absolute w-full h-full backface-hidden bg-white rounded-2xl shadow-2xl flex items-center justify-center border-4 border-gray-300 p-4">
+           
+          <div class="absolute w-full h-full backface-hidden card-flash flex items-center justify-center p-4">
             <div class="flex justify-center items-center gap-4">
               <template x-for="(item, i) in currentCard?.chars" :key="i">
-                <span class="text-6xl sm:text-7xl text-gray-800" x-text="item.char"></span>
+                <span class="text-6xl sm:text-7xl text-[#111111]" x-text="item.char"></span>
               </template>
             </div>
           </div>
           
-          <div class="absolute w-full h-full backface-hidden bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl shadow-2xl flex flex-col items-center justify-center border-4 border-orange-300 rotate-y-180 p-4">
+          <div class="absolute w-full h-full backface-hidden card-back rounded-2xl flex flex-col items-center justify-center rotate-y-180 p-4">
             <div class="flex justify-center items-center gap-6 mb-4">
               <template x-for="(item, i) in currentCard?.chars" :key="i">
                 <div class="flex flex-col items-center">
-                  <span class="text-5xl sm:text-6xl text-white font-bold" x-text="item.char"></span>
-                  <span class="text-base text-white/80" x-text="item.romaji"></span>
+                  <span class="text-5xl sm:text-6xl font-bold text-[#111111]" x-text="item.char"></span>
+                  <span class="text-base text-[#787774]" x-text="item.romaji"></span>
                 </div>
               </template>
             </div>
-            <span class="text-base text-white/80 text-center" x-text="currentCard?.tip"></span>
+            <span class="text-base text-[#787774] text-center" x-text="currentCard?.tip"></span>
           </div>
           
         </div>
       </div>
       
-      <div class="flex items-center gap-4">
-        <button @click="prevCard()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition-colors text-lg">
-          ← Prev
+      <div class="flex items-center gap-3 sm:gap-4">
+        <button @click="prevCard()" class="btn-outline px-5 py-2.5 text-sm font-medium">
+          <svg class="w-4 h-4 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          Prev
         </button>
-        <span class="text-gray-600 font-medium min-w-[80px] text-center" x-text="(currentIndex + 1) + ' / ' + cards.length"></span>
-        <button @click="nextCard()" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg shadow transition-colors text-lg">
-          Next →
+        <span class="text-xs text-[#787774] font-mono min-w-[80px] text-center" x-text="(currentIndex + 1) + ' / ' + cards.length"></span>
+        <button @click="nextCard()" class="btn-outline px-5 py-2.5 text-sm font-medium">
+          Next
+          <svg class="w-4 h-4 inline ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
         </button>
       </div>
     </div>
   </div>
+  <a href="index.html" class="sticky bottom-0 block py-4 text-center bg-[#F7F6F3]/80 backdrop-blur-sm text-[#787774] font-medium border-t border-[#EAEAEA]">
+    <span class="inline-flex items-center gap-2">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Home
+    </span>
+  </a>
 
   <script>
     function lookalikeApp() {
@@ -161,7 +187,7 @@
         },
         
         get allFlipped() {
-          return this.flippedCount === this.cards.length && this.cards.length > 0;
+          return this.flippedCount === this.cards.length;
         },
 
         flipCard(index) {
@@ -192,9 +218,9 @@
         },
         
         shuffle() {
-          for (let i = this.cards.length - 1; i > 0; i--) {
+          for (let i = this.allCards.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
+            [this.allCards[i], this.allCards[j]] = [this.allCards[j], this.allCards[i]];
           }
         },
         
@@ -205,8 +231,5 @@
       };
     }
   </script>
-  <a href="/" class="sticky bottom-0 block py-4 text-center bg-white/50 backdrop-blur-sm text-gray-700 font-medium">
-    ← Home
-  </a>
 </body>
 </html>

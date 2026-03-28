@@ -48,23 +48,23 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 
 ### 5. Audio Pronunciation
 - Toggle button to switch between Sound mode and text mode
-- **Sound mode (default)**: Shows 🔊 icon, clicking card plays native Japanese audio
+- **Sound mode (default)**: Clicking card plays native Japanese audio
 - **Text mode**: Shows romaji (hiragana/katakana) or reading (kanji), clicking card flips back to character
-- Small 🔄 flip icon at bottom center of card back in sound mode to flip back
+- Small flip icon at bottom center of card back in sound mode to flip back
 - **Voice Selection**: Cycling button to switch voices (Nanami → Google → Keita) - appears only in sound mode. Default: Nanami
 - Uses local pre-downloaded audio files from `google-tts/`, `edge-tts-keita/`, or `edge-tts-nanami/` folders (no API calls)
 - In Single View, navigating to Prev/Next automatically plays audio when sound mode is on
 - Switching to sound mode in Single View also plays audio automatically
-- **Listen button** in Single View: 🔊 Listen button appears between Prev/Next controls (only in sound mode)
+- **Listen button** in Single View: Listen button appears between Prev/Next controls (only in sound mode)
 
 ### 6. Category Filters
 - Toggle buttons to include/exclude character categories
 - Each shows count of characters in that category
-- Active filters highlighted in indigo
+- Active filters highlighted in black (#111111)
 
 ## File Structure
 ```
-/Users/thihathit/Desktop/kana/
+/home/debian/projects/kana/
 ├── index.html              # Landing page with links to flashcards
 ├── hiragana.html           # Hiragana flashcard application
 ├── katakana.html           # Katakana flashcard application
@@ -132,23 +132,32 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - Tips on card back explain the differences between characters
 - Marked as BETA
 
-## Visual Design
-- Mobile-first responsive design using Tailwind CSS
+## Visual Design (Premium Utilitarian Minimalism)
+- **Color Palette**: Warm monochrome
+  - Background: #F7F6F3 (warm bone/off-white)
+  - Surface: #FFFFFF (white)
+  - Borders: #EAEAEA (ultra-light gray)
+  - Text: #111111 (charcoal)
+  - Secondary: #787774 (muted gray)
+- Typography: DM Sans (body) + Instrument Serif (headings)
+- 1px solid borders, no heavy shadows
+- Solid black buttons (#111111), white text
+- Pill-shaped tags with uppercase text
+- SVG icons (no emojis)
+- Subtle ambient background blobs (low opacity)
+- Fade-in animations on page load
+- No gradients, no glassmorphism
 - Grid layout with sticky home button at bottom
-- Reduced side padding for better mobile readability
-- Larger card sizes with rounded padding
-- Color-coded by type: Hiragana (rose), Katakana (emerald), Kanji (amber), Combined (violet), Kotoba (cyan), Lookalike (orange)
-- Gradient backgrounds
 - All pages vertically centered using CSS Grid
 
 ## How to Use
 1. Open `index.html` to choose character type
 2. Click cards to flip between character and answer
 3. Use Shuffle to randomize order
-4. Use Flip All to reveal all answers
+4. Use Reveal All to reveal all answers
 5. Toggle category buttons to filter characters (not available on Lookalikes)
 6. Use Layout toggle to switch between grid/single view
-7. In Single view, use Prev/Next buttons to navigate. Use the 🔊 Listen button to play audio anytime.
+7. In Single view, use Prev/Next buttons to navigate. Use the Listen button to play audio anytime.
 8. Toggle Sound/Text(Romaji or Reading) to switch between audio mode and text mode (not available on Lookalikes or Kotoba)
 9. Click the Voice button to cycle between Nanami, Google, or Keita voices
 10. In Single view, use Left/Right arrow keys to navigate
