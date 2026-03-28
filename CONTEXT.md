@@ -71,9 +71,11 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ├── combined.html           # Combined Hiragana + Katakana
 ├── kanji.html              # Kanji flashcard application (JLPT N5-N1)
 ├── kotoba.html             # Vocabulary flashcard application (JLPT N5-N1)
+├── true_kotoba.html         # True vocabulary - split compounds into components
 ├── lookalike.html          # Lookalike kanas - distinguish similar characters
 ├── common.css              # Shared styles (variables, dark mode, components)
 ├── jlpt_kotoba_data.json  # Vocabulary data (8385 words)
+├── true_jlpt_kotoba_data.json  # Split compounds data (9075 entries)
 ├── download_from_edgetts.py   # Script to refresh audio files using Edge TTS
 ├── download_from_google.py    # Script to refresh audio files using Google TTS
 ├── character_lists.py         # Shared character lists (imports from JSON)
@@ -81,9 +83,12 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 │   ├── hiragana/       # 104 hiragana audio files
 │   ├── katakana/       # 104 katakana audio files
 │   ├── kanji/          # Kanji reading audio files
-│   └── kotoba/         # Kotoba vocabulary audio files
+│   ├── kotoba/         # Kotoba vocabulary audio files
+│   └── true_kotoba/    # True kotoba vocabulary audio files
 ├── edge-tts-keita/    # Edge TTS Keita voice audio files
+│   └── true_kotoba/    # True kotoba vocabulary audio files
 ├── edge-tts-nanami/   # Edge TTS Nanami voice audio files
+│   └── true_kotoba/    # True kotoba vocabulary audio files
 └── CONTEXT.md         # This file
 ```
 
@@ -131,6 +136,19 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - Cards include pairs with different sounds (hiragana-hiragana, katakana-katakana, hiragana-katakana cross)
 - **Buttons**: Shuffle, Reveal/Hide All, Layout Toggle
 - Tips on card back explain the differences between characters
+- Marked as BETA
+
+### True Kotoba (Vocabulary)
+- **9,075 entries** from JLPT vocabulary (8,385 compounds + 690 split components)
+- Each compound word is split into individual kanji components
+- Cards distinguish between "Compound" (original word) and "Component" (single kanji)
+- Shows "from: [parent]" on component cards indicating source compound
+- **Categories by JLPT level**: N5, N4, N3, N2, N1
+- **Filter toggles**: N levels (top row) + Compounds / Components (bottom row)
+- Compound/Component counts update reactively based on N level filters
+- **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle, Voice Selector
+- Listen button on card back for audio playback (all cards)
+- Audio files stored in `true_kotoba/` folder
 - Marked as BETA
 
 ## Visual Design (Premium Utilitarian Minimalism)

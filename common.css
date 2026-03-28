@@ -85,10 +85,32 @@ body {
   color: var(--tag-text, #956400);
 }
 
+.tag-compound {
+  background-color: var(--tag-compound-bg, #FEF3C7);
+  color: var(--tag-compound-text, #92400E);
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.tag-component {
+  background-color: var(--tag-component-bg, #DBEAFE);
+  color: var(--tag-component-text, #1E40AF);
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --tag-bg: #3D3522;
     --tag-text: #E5D18B;
+    --tag-compound-bg: #422006;
+    --tag-compound-text: #FCD34D;
+    --tag-component-bg: #1E3A5F;
+    --tag-component-text: #93C5FD;
   }
 }
 

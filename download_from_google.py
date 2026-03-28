@@ -4,7 +4,13 @@ import subprocess
 import urllib.parse
 
 # Import character lists from the shared module
-from character_lists import hiragana_list, katakana_list, kanji_list, kotoba_list
+from character_lists import (
+    hiragana_list,
+    katakana_list,
+    kanji_list,
+    kotoba_list,
+    true_kotoba_list,
+)
 
 
 def download_audio(text, filepath):
@@ -1019,3 +1025,15 @@ for kw in unique_kotoba:
         download_audio(kw, filepath)
         count += 1
 print(f"Done kotoba: {count} new (total {len(unique_kotoba)})")
+
+print("Downloading true_kotoba...")
+os.makedirs("google-tts/true_kotoba", exist_ok=True)
+count = 0
+unique_true_kotoba = list(set(true_kotoba_list))
+for tk in unique_true_kotoba:
+    filepath = f"google-tts/true_kotoba/{tk}.mp3"
+    if not os.path.exists(filepath):
+        print(f"Downloading {tk}...")
+        download_audio(tk, filepath)
+        count += 1
+print(f"Done true_kotoba: {count} new (total {len(unique_true_kotoba)})")

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>True Kotoba Flashcards</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Instrument+Serif&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .blob-1 { background-color: #a78bfa; }
+    .blob-2 { background-color: #c4b5fd; }
+  </style>
+</head>
+<body class="min-h-screen grid grid-rows-[1fr_auto]" x-data="kotobaApp()" x-init="init()">
+  <div class="fixed-bg-blobs">
+    <div class="blob-1"></div>
+    <div class="blob-2"></div>
+  </div>
+  <div class="container mx-auto px-2 py-6 sm:px-4 sm:py-8 w-full flex flex-col justify-center">
+    <div x-show="!loaded" class="text-center py-20">
+      <p class="text-gray-600 text-lg">Loading vocabulary...</p>
+    </div>
+    <div x-show="loaded" x-cloak>
+    <header class="text-center mb-8 sm:mb-12 animate-in">
+      <h1 class="font-serif text-3xl sm:text-5xl text-theme tracking-tight mb-2 flex items-center justify-center gap-2">
+        True Kotoba
+        <span class="tag">Beta</span>
+      </h1>
+      <p class="text-theme-secondary text-sm sm:text-base">
+        <span x-text="flippedCount"></span> / <span x-text="cards.length"></span> revealed
+      </p>
+    </header>
+
+    <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 animate-in" style="animation-delay: 100ms;">
+      <button @click="shuffle()" class="btn px-4 sm:px-6 py-2 text-sm font-medium">Shuffle</button>
+      <button @click="flipAll()" class="btn px-4 sm:px-6 py-2 text-sm font-medium">
+        <span x-show="!allFlipped">Reveal All</span>
+        <span x-show="allFlipped">Hide All</span>
+      </button>
+      <button @click="layout = layout === 'grid' ? 'single' : 'grid'" class="btn px-4 sm:px-6 py-2 text-sm font-medium">
+        <span x-show="layout === 'grid'">Single</span>
+        <span x-show="layout === 'single'">Grid</span>
+      </button>
+      <button @click="cycleVoice()" class="btn px-3 py-2 text-sm font-medium">
+        <span x-text="voiceLabel"></span>
+      </button>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-3 mb-8 animate-in" style="animation-delay: 150ms;">
+      <div class="flex gap-1.5 sm:gap-2">
+        <button @click="toggleFilter('n5')" 
+                class="tag transition-colors"
+                :class="filters.n5 ? 'bg-theme-inverse text-theme-inverse' : 'bg-theme text-theme-secondary'">
+          N5 <span x-text="n5Count"></span>
+        </button>
+        <button @click="toggleFilter('n4')" 
+                class="tag transition-colors"
+                :class="filters.n4 ? 'bg-theme-inverse text-theme-inverse' : 'bg-theme text-theme-secondary'">
+          N4 <span x-text="n4Count"></span>
+        </button>
+        <button @click="toggleFilter('n3')" 
+                class="tag transition-colors"
+                :class="filters.n3 ? 'bg-theme-inverse text-theme-inverse' : 'bg-theme text-theme-secondary'">
+          N3 <span x-text="n3Count"></span>
+        </button>
+        <button @click="toggleFilter('n2')" 
+                class="tag transition-colors"
+                :class="filters.n2 ? 'bg-theme-inverse text-theme-inverse' : 'bg-theme text-theme-secondary'">
+          N2 <span x-text="n2Count"></span>
+        </button>
+        <button @click="toggleFilter('n1')" 
+                class="tag transition-colors"
+                :class="filters.n1 ? 'bg-theme-inverse text-theme-inverse' : 'bg-theme text-theme-secondary'">
+          N1 <span x-text="n1Count"></span>
+        </button>
+      </div>
+      <div class="flex gap-1.5 sm:gap-2">
+        <button @click="toggleTypeFilter('compound')" 
+                class="tag transition-colors"
+                :class="typeFilters.compound ? 'bg-theme-inverse text-theme-inverse' : 'bg-theme text-theme-secondary'">
+          Compounds <span x-text="filteredCompoundCount"></span>
+        </button>
+        <button @click="toggleTypeFilter('component')" 
+                class="tag transition-colors"
+                :class="typeFilters.component ? 'bg-theme-inverse text-theme-inverse' : 'bg-theme text-theme-secondary'">
+          Components <span x-text="filteredComponentCount"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap justify-center gap-3 sm:gap-4" x-show="layout === 'grid'">
+      <template x-for="(card, index) in cards" :key="index">
+        <div class="perspective-1000 w-44 h-48 sm:w-48 sm:h-56 cursor-pointer" @click="flipCard(index)">
+          <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
+               :class="card.flipped ? 'rotate-y-180' : ''">
+            
+            <div class="absolute w-full h-full backface-hidden card-flash flex flex-col items-center justify-center p-2 sm:p-3">
+              <span class="text-xl sm:text-2xl text-theme text-center leading-tight" x-text="card.word"></span>
+              <div class="flex gap-1 mt-2 items-center">
+                <span class="text-xs uppercase" :class="card.is_compound ? 'tag-compound' : 'tag-component'" x-text="card.is_compound ? 'Compound' : 'Component'"></span>
+                <span class="text-xs text-theme-secondary uppercase" x-text="card.category"></span>
+              </div>
+              <template x-if="!card.is_compound && card.parent">
+                <span class="text-xs text-theme-secondary mt-1">from: <span x-text="card.parent"></span></span>
+              </template>
+            </div>
+            
+            <div class="absolute w-full h-full backface-hidden card-back rounded-xl flex flex-col items-center justify-center p-2 sm:p-3 rotate-y-180">
+              <span class="text-lg sm:text-xl font-semibold text-theme text-center leading-tight" x-text="card.word"></span>
+              <span class="text-sm sm:text-base mt-1 text-theme-secondary text-center" x-text="card.reading"></span>
+              <span class="text-base sm:text-lg mt-2 text-theme text-center" x-text="card.meaning"></span>
+              <button @click.stop="playSound(card)" class="mt-2 px-3 py-1 bg-theme-inverse text-theme-inverse text-sm rounded transition-colors">Listen</button>
+            </div>
+            
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <div x-show="layout === 'single'" x-cloak class="flex flex-col items-center">
+      <div class="perspective-1000 w-full max-w-md cursor-pointer mb-8" @click="toggleCurrentCard()">
+        <div class="transform-style-3d w-full h-48 sm:h-56 relative transition-transform duration-300" 
+             :class="currentCard?.flipped ? 'rotate-y-180' : ''">
+          
+          <div class="absolute w-full h-full backface-hidden card-flash flex flex-col items-center justify-center p-4 sm:p-6">
+            <span class="text-4xl sm:text-5xl text-theme text-center leading-tight" x-text="currentCard?.word"></span>
+            <div class="flex gap-2 mt-3 items-center">
+              <span class="text-xs uppercase px-2 py-1 rounded" :class="currentCard?.is_compound ? 'tag-compound' : 'tag-component'" x-text="currentCard?.is_compound ? 'Compound' : 'Component'"></span>
+              <span class="text-sm text-theme-secondary uppercase" x-text="currentCard?.category"></span>
+            </div>
+            <template x-if="!currentCard?.is_compound && currentCard?.parent">
+              <span class="text-sm text-theme-secondary mt-2">from: <span x-text="currentCard?.parent"></span></span>
+            </template>
+          </div>
+          
+          <div class="absolute w-full h-full backface-hidden card-back rounded-2xl flex flex-col items-center justify-center p-4 sm:p-6 rotate-y-180">
+            <span class="text-3xl sm:text-4xl font-semibold text-theme text-center leading-tight" x-text="currentCard?.word"></span>
+            <span class="text-xl sm:text-2xl mt-1 text-theme-secondary text-center" x-text="currentCard?.reading"></span>
+            <span class="text-lg sm:text-xl text-center mt-3 text-theme" x-text="currentCard?.meaning"></span>
+          </div>
+          
+        </div>
+      </div>
+      
+      <div class="flex flex-col items-center gap-4">
+          <div class="flex items-center gap-3 sm:gap-4">
+          <button @click="prevCard()" class="btn-outline px-5 py-2.5 text-sm font-medium">
+            <svg class="w-4 h-4 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Prev
+          </button>
+          <button @click="playSound(currentCard)" class="btn px-6 py-2.5 text-sm font-medium">
+            <svg class="w-4 h-4 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            Listen
+          </button>
+          </template>
+          <button @click="nextCard()" class="btn-outline px-5 py-2.5 text-sm font-medium">
+            Next
+            <svg class="w-4 h-4 inline ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+        <span class="text-xs text-theme-secondary font-mono" x-text="(currentIndex + 1) + ' / ' + cards.length"></span>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <script>
+    function kotobaApp() {
+
+      return {
+        loaded: false,
+        allCards: [],
+        filters: { n5: true, n4: true, n3: false, n2: false, n1: false },
+        typeFilters: { compound: true, component: true },
+        layout: 'grid',
+
+        init() {
+          fetch('true_jlpt_kotoba_data.json')
+            .then(res => res.json())
+            .then(data => {
+              this.allCards = data.map(item => ({
+                word: item.word,
+                reading: item.furigana || item.word,
+                meaning: item.meaning,
+                category: 'n' + item.level,
+                is_compound: item.is_compound,
+                parent: item.parent || '',
+                flipped: false
+              }));
+              this.loaded = true;
+            })
+            .catch(e => console.error('Failed to load vocabulary:', e));
+          document.addEventListener('keydown', (e) => {
+            if (this.layout !== 'single') return;
+            if (e.key === 'ArrowLeft') this.prevCard();
+            if (e.key === 'ArrowRight') this.nextCard();
+          });
+        },
+
+        currentIndex: 0,
+        selectedVoice: 'edge-tts-nanami',
+        voices: [
+          { id: 'edge-tts-nanami', label: 'Nanami' },
+          { id: 'google-tts', label: 'Google' },
+          { id: 'edge-tts-keita', label: 'Keita' }
+        ],
+
+        get cards() {
+          return this.allCards.filter(card => 
+            this.filters[card.category] && 
+            ((card.is_compound && this.typeFilters.compound) || (!card.is_compound && this.typeFilters.component))
+          );
+        },
+
+        get currentCard() {
+          return this.cards[this.currentIndex] || null;
+        },
+
+        get n5Count() { return this.allCards.filter(c => c.category === 'n5').length; },
+        get n4Count() { return this.allCards.filter(c => c.category === 'n4').length; },
+        get n3Count() { return this.allCards.filter(c => c.category === 'n3').length; },
+        get n2Count() { return this.allCards.filter(c => c.category === 'n2').length; },
+        get n1Count() { return this.allCards.filter(c => c.category === 'n1').length; },
+
+        get compoundCount() { return this.allCards.filter(c => c.is_compound).length; },
+        get componentCount() { return this.allCards.filter(c => !c.is_compound).length; },
+
+        get filteredCompoundCount() { return this.allCards.filter(c => c.is_compound && this.filters[c.category]).length; },
+        get filteredComponentCount() { return this.allCards.filter(c => !c.is_compound && this.filters[c.category]).length; },
+        
+        get flippedCount() {
+          return this.cards.filter(c => c.flipped).length;
+        },
+        
+        get allFlipped() {
+          return this.flippedCount === this.cards.length;
+        },
+
+        get voiceLabel() {
+          const voice = this.voices.find(v => v.id === this.selectedVoice);
+          return voice ? voice.label : 'Voice';
+        },
+
+        cycleVoice() {
+          const currentIndex = this.voices.findIndex(v => v.id === this.selectedVoice);
+          const nextIndex = (currentIndex + 1) % this.voices.length;
+          this.selectedVoice = this.voices[nextIndex].id;
+        },
+
+        toggleFilter(filter) {
+          this.filters[filter] = !this.filters[filter];
+          this.currentIndex = 0;
+        },
+
+        toggleTypeFilter(type) {
+          this.typeFilters[type] = !this.typeFilters[type];
+          this.currentIndex = 0;
+        },
+
+        flipCard(index) {
+          const card = this.cards[index];
+          card.flipped = !card.flipped;
+        },
+
+        toggleCurrentCard() {
+          if (this.currentCard) {
+            this.currentCard.flipped = !this.currentCard.flipped;
+          }
+        },
+
+        nextCard() {
+          if (this.currentIndex < this.cards.length - 1) {
+            this.currentIndex++;
+          } else {
+            this.currentIndex = 0;
+          }
+        },
+
+        prevCard() {
+          if (this.currentIndex > 0) {
+            this.currentIndex--;
+          } else {
+            this.currentIndex = this.cards.length - 1;
+          }
+        },
+        
+        shuffle() {
+          const visibleCards = this.cards;
+          for (let i = visibleCards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const cardI = visibleCards[i];
+            const cardJ = visibleCards[j];
+            const idxI = this.allCards.indexOf(cardI);
+            const idxJ = this.allCards.indexOf(cardJ);
+            [this.allCards[idxI], this.allCards[idxJ]] = [this.allCards[idxJ], this.allCards[idxI]];
+          }
+        },
+        
+        flipAll() {
+          const shouldFlip = !this.allFlipped;
+          this.cards.forEach(card => card.flipped = shouldFlip);
+        },
+
+        playSound(card) {
+          if (!card) return;
+          const filename = card.reading + '.mp3';
+          const audioUrl = `${this.selectedVoice}/true_kotoba/${filename}`;
+          const audio = new Audio(audioUrl);
+          audio.play().catch(err => console.log('Playback failed:', err));
+        }
+      };
+    }
+  </script>
+  <a href="index.html" class="sticky-home"><span class="inline-flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Home</span></a>
+</body>
+</html>

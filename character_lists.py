@@ -9,7 +9,13 @@ import json
 with open("jlpt_kotoba_data.json", "r", encoding="utf-8") as f:
     kotoba_data = json.load(f)
 
+with open("true_jlpt_kotoba_data.json", "r", encoding="utf-8") as f:
+    true_kotoba_data = json.load(f)
+
 kotoba_list = [item.get("furigana") or item.get("word") for item in kotoba_data]
+true_kotoba_list = [
+    item.get("furigana") or item.get("word") for item in true_kotoba_data
+]
 
 hiragana_list = [
     "あ",
