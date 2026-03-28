@@ -9,39 +9,24 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Instrument+Serif&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="common.css">
   <style>
-    :root { --bg: #F7F6F3; --surface: #FFFFFF; --border: #EAEAEA; --text: #111111; --text-secondary: #787774; }
-    body { background-color: var(--bg); font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--text); }
-    .font-serif { font-family: 'Instrument Serif', Georgia, serif; }
-    [x-cloak] { display: none !important; }
-    .perspective-1000 { perspective: 1000px; }
-    .transform-style-3d { transform-style: preserve-3d; }
-    .backface-hidden { backface-visibility: hidden; }
-    .rotate-y-180 { transform: rotateY(180deg); }
-    .btn { background: var(--text); color: white; border-radius: 6px; transition: all 0.2s ease; }
-    .btn:hover { background: #333333; }
-    .btn:active { transform: scale(0.98); }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; transition: all 0.2s ease; }
-    .btn-outline:hover { background: var(--surface); border-color: #999; }
-    .card-flash { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; transition: box-shadow 0.2s ease; }
-    .card-flash:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-    .card-back { background: var(--surface); border: 1px solid var(--border); }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-in { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+    .blob-1 { background-color: #fb923c; }
+    .blob-2 { background-color: #f87171; }
   </style>
 </head>
 <body class="min-h-screen grid grid-rows-[1fr_auto]" x-data="lookalikeApp()">
-  <div class="fixed inset-0 pointer-events-none" style="opacity: 0.02;">
-    <div class="absolute top-1/4 -left-32 w-96 h-96 bg-orange-400 rounded-full blur-3xl animate-pulse" style="animation-duration: 20s;"></div>
-    <div class="absolute bottom-1/4 -right-32 w-96 h-96 bg-red-300 rounded-full blur-3xl animate-pulse" style="animation-duration: 25s;"></div>
+  <div class="fixed-bg-blobs">
+    <div class="blob-1"></div>
+    <div class="blob-2"></div>
   </div>
   <div class="container mx-auto px-3 py-6 sm:px-6 sm:py-10 w-full flex flex-col justify-center">
     <header class="text-center mb-8 sm:mb-12 animate-in">
-      <h1 class="font-serif text-3xl sm:text-5xl text-[#111111] tracking-tight mb-2 flex items-center justify-center gap-2">
+      <h1 class="font-serif text-3xl sm:text-5xl text-theme tracking-tight mb-2 flex items-center justify-center gap-2">
         Lookalikes
-        <span class="tag bg-[#FBF3DB] text-[#956400]">Beta</span>
+        <span class="tag">Beta</span>
       </h1>
-      <p class="text-[#787774] text-sm sm:text-base"><span x-text="flippedCount"></span> / <span x-text="cards.length"></span> revealed</p>
+      <p class="text-theme-secondary text-sm sm:text-base"><span x-text="flippedCount"></span> / <span x-text="cards.length"></span> revealed</p>
     </header>
 
     <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 animate-in" style="animation-delay: 100ms;">
@@ -58,14 +43,14 @@
 
     <div class="flex flex-wrap justify-center gap-3 sm:gap-4" x-show="layout === 'grid'">
       <template x-for="(card, index) in cards" :key="index">
-        <div class="perspective-1000 w-32 sm:w-32 sm:h-40 cursor-pointer" @click="flipCard(index)">
+        <div class="perspective-1000 w-32 h-44 sm:w-32 sm:h-40 cursor-pointer" @click="flipCard(index)">
           <div class="transform-style-3d w-full h-full relative transition-transform duration-300" 
                :class="card.flipped ? 'rotate-y-180' : ''">
              
             <div class="absolute w-full h-full backface-hidden card-flash flex items-center justify-center p-2">
               <div class="flex justify-center items-center gap-1 sm:gap-2">
                 <template x-for="(item, i) in card.chars" :key="i">
-                  <span class="text-4xl sm:text-5xl text-[#111111]" x-text="item.char"></span>
+                  <span class="text-4xl sm:text-5xl text-theme" x-text="item.char"></span>
                 </template>
               </div>
             </div>
@@ -74,12 +59,12 @@
               <div class="flex justify-center items-center gap-2 sm:gap-3 mb-2">
                 <template x-for="(item, i) in card.chars" :key="i">
                   <div class="flex flex-col items-center">
-                    <span class="text-2xl sm:text-3xl font-bold text-[#111111]" x-text="item.char"></span>
-                    <span class="text-xs text-[#787774]" x-text="item.romaji"></span>
+                    <span class="text-2xl sm:text-3xl font-bold text-theme" x-text="item.char"></span>
+                    <span class="text-xs text-theme-secondary" x-text="item.romaji"></span>
                   </div>
                 </template>
               </div>
-              <span class="text-xs text-[#787774] text-center" x-text="card.tip"></span>
+              <span class="text-xs text-theme-secondary text-center" x-text="card.tip"></span>
             </div>
             
           </div>
@@ -95,7 +80,7 @@
           <div class="absolute w-full h-full backface-hidden card-flash flex items-center justify-center p-4">
             <div class="flex justify-center items-center gap-4">
               <template x-for="(item, i) in currentCard?.chars" :key="i">
-                <span class="text-6xl sm:text-7xl text-[#111111]" x-text="item.char"></span>
+                <span class="text-6xl sm:text-7xl text-theme" x-text="item.char"></span>
               </template>
             </div>
           </div>
@@ -104,12 +89,12 @@
             <div class="flex justify-center items-center gap-6 mb-4">
               <template x-for="(item, i) in currentCard?.chars" :key="i">
                 <div class="flex flex-col items-center">
-                  <span class="text-5xl sm:text-6xl font-bold text-[#111111]" x-text="item.char"></span>
-                  <span class="text-base text-[#787774]" x-text="item.romaji"></span>
+                  <span class="text-5xl sm:text-6xl font-bold text-theme" x-text="item.char"></span>
+                  <span class="text-base text-theme-secondary" x-text="item.romaji"></span>
                 </div>
               </template>
             </div>
-            <span class="text-base text-[#787774] text-center" x-text="currentCard?.tip"></span>
+            <span class="text-base text-theme-secondary text-center" x-text="currentCard?.tip"></span>
           </div>
           
         </div>
@@ -120,7 +105,7 @@
           <svg class="w-4 h-4 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
           Prev
         </button>
-        <span class="text-xs text-[#787774] font-mono min-w-[80px] text-center" x-text="(currentIndex + 1) + ' / ' + cards.length"></span>
+        <span class="text-xs text-theme-secondary font-mono min-w-[80px] text-center" x-text="(currentIndex + 1) + ' / ' + cards.length"></span>
         <button @click="nextCard()" class="btn-outline px-5 py-2.5 text-sm font-medium">
           Next
           <svg class="w-4 h-4 inline ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -128,12 +113,7 @@
       </div>
     </div>
   </div>
-  <a href="index.html" class="sticky bottom-0 block py-4 text-center bg-[#F7F6F3]/80 backdrop-blur-sm text-[#787774] font-medium border-t border-[#EAEAEA]">
-    <span class="inline-flex items-center gap-2">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      Home
-    </span>
-  </a>
+  <a href="index.html" class="sticky-home"><span class="inline-flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Home</span></a>
 
   <script>
     function lookalikeApp() {

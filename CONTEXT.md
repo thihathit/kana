@@ -72,6 +72,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ├── kanji.html              # Kanji flashcard application (JLPT N5-N1)
 ├── kotoba.html             # Vocabulary flashcard application (JLPT N5-N1)
 ├── lookalike.html          # Lookalike kanas - distinguish similar characters
+├── common.css              # Shared styles (variables, dark mode, components)
 ├── jlpt_kotoba_data.json  # Vocabulary data (8385 words)
 ├── download_from_edgetts.py   # Script to refresh audio files using Edge TTS
 ├── download_from_google.py    # Script to refresh audio files using Google TTS

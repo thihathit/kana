@@ -9,37 +9,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Instrument+Serif&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="common.css">
   <style>
-    :root { --bg: #F7F6F3; --surface: #FFFFFF; --border: #EAEAEA; --text: #111111; --text-secondary: #787774; }
-    body { background-color: var(--bg); font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; color: var(--text); }
-    .font-serif { font-family: 'Instrument Serif', Georgia, serif; }
-    [x-cloak] { display: none !important; }
-    .perspective-1000 { perspective: 1000px; }
-    .transform-style-3d { transform-style: preserve-3d; }
-    .backface-hidden { backface-visibility: hidden; }
-    .rotate-y-180 { transform: rotateY(180deg); }
-    .btn { background: var(--text); color: white; border-radius: 6px; transition: all 0.2s ease; }
-    .btn:hover { background: #333333; }
-    .btn:active { transform: scale(0.98); }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; transition: all 0.2s ease; }
-    .btn-outline:hover { background: var(--surface); border-color: #999; }
-    .card-flash { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; transition: box-shadow 0.2s ease; }
-    .card-flash:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-    .card-back { background: var(--surface); border: 1px solid var(--border); }
-    .tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; border-radius: 9999px; padding: 3px 10px; }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-in { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+    .blob-1 { background-color: #fb923c; }
+    .blob-2 { background-color: #fdba74; }
   </style>
 </head>
 <body class="min-h-screen grid grid-rows-[1fr_auto]" x-data="kanjiApp()">
-  <div class="fixed inset-0 pointer-events-none" style="opacity: 0.02;">
-    <div class="absolute top-1/4 -left-32 w-96 h-96 bg-amber-400 rounded-full blur-3xl animate-pulse" style="animation-duration: 20s;"></div>
-    <div class="absolute bottom-1/4 -right-32 w-96 h-96 bg-orange-300 rounded-full blur-3xl animate-pulse" style="animation-duration: 25s;"></div>
+  <div class="fixed-bg-blobs">
+    <div class="blob-1"></div>
+    <div class="blob-2"></div>
   </div>
   <div class="container mx-auto px-3 py-6 sm:px-6 sm:py-10 w-full flex flex-col justify-center">
     <header class="text-center mb-8 sm:mb-12 animate-in">
-      <h1 class="font-serif text-3xl sm:text-5xl text-[#111111] tracking-tight mb-2">Kanji</h1>
-      <p class="text-[#787774] text-sm sm:text-base"><span x-text="flippedCount"></span> / <span x-text="cards.length"></span> revealed</p>
+      <h1 class="font-serif text-3xl sm:text-5xl text-theme tracking-tight mb-2">Kanji</h1>
+      <p class="text-theme-secondary text-sm sm:text-base"><span x-text="flippedCount"></span> / <span x-text="cards.length"></span> revealed</p>
     </header>
 
     <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 animate-in" style="animation-delay: 100ms;">
@@ -65,27 +49,27 @@
     <div class="flex flex-wrap justify-center gap-1.5 sm:gap-2 mb-8 animate-in" style="animation-delay: 150ms;">
       <button @click="toggleFilter('n5')" 
               class="tag transition-colors"
-              :class="filters.n5 ? 'bg-[#111111] text-white' : 'bg-[#EAEAEA] text-[#787774]'">
+              :class="filters.n5 ? 'bg-theme-inverse text-theme-inverse' : 'bg-theme text-theme-secondary'">
         N5 <span x-text="n5Count"></span>
       </button>
       <button @click="toggleFilter('n4')" 
               class="tag transition-colors"
-              :class="filters.n4 ? 'bg-[#111111] text-white' : 'bg-[#EAEAEA] text-[#787774]'">
+              :class="filters.n4 ? 'bg-theme-inverse text-theme-inverse' : 'bg-theme text-theme-secondary'">
         N4 <span x-text="n4Count"></span>
       </button>
       <button @click="toggleFilter('n3')" 
               class="tag transition-colors"
-              :class="filters.n3 ? 'bg-[#111111] text-white' : 'bg-[#EAEAEA] text-[#787774]'">
+              :class="filters.n3 ? 'bg-theme-inverse text-theme-inverse' : 'bg-theme text-theme-secondary'">
         N3 <span x-text="n3Count"></span>
       </button>
       <button @click="toggleFilter('n2')" 
               class="tag transition-colors"
-              :class="filters.n2 ? 'bg-[#111111] text-white' : 'bg-[#EAEAEA] text-[#787774]'">
+              :class="filters.n2 ? 'bg-theme-inverse text-theme-inverse' : 'bg-theme text-theme-secondary'">
         N2 <span x-text="n2Count"></span>
       </button>
       <button @click="toggleFilter('n1')" 
               class="tag transition-colors"
-              :class="filters.n1 ? 'bg-[#111111] text-white' : 'bg-[#EAEAEA] text-[#787774]'">
+              :class="filters.n1 ? 'bg-theme-inverse text-theme-inverse' : 'bg-theme text-theme-secondary'">
         N1 <span x-text="n1Count"></span>
       </button>
     </div>
@@ -97,15 +81,15 @@
                :class="card.flipped ? 'rotate-y-180' : ''">
             
             <div class="absolute w-full h-full backface-hidden card-flash flex items-center justify-center p-2">
-              <span class="text-4xl sm:text-5xl text-[#111111]" x-text="card.kanji"></span>
+              <span class="text-4xl sm:text-5xl text-theme" x-text="card.kanji"></span>
             </div>
             
             <div class="absolute w-full h-full backface-hidden card-back rounded-xl flex flex-col items-center justify-center p-2 rotate-y-180"
                  @click.stop="showText ? flipCard(index) : playSoundFromCard(card)">
-              <span class="text-xl sm:text-2xl font-medium text-[#111111]" 
+              <span class="text-xl sm:text-2xl font-medium text-theme" 
                     x-text="showText ? card.reading : ''"></span>
-              <span class="text-sm text-[#787774] mt-2 text-center leading-tight" x-text="card.meaning"></span>
-              <svg x-show="!showText" @click.stop="flipCard(index)" class="w-5 h-5 mt-2 text-[#787774]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <span class="text-sm text-theme-secondary mt-2 text-center leading-tight" x-text="card.meaning"></span>
+              <svg x-show="!showText" @click.stop="flipCard(index)" class="w-5 h-5 mt-2 text-theme-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
               </svg>
             </div>
@@ -121,15 +105,15 @@
              :class="currentCard?.flipped ? 'rotate-y-180' : ''">
           
           <div class="absolute w-full h-full backface-hidden card-flash flex items-center justify-center p-6">
-            <span class="text-6xl sm:text-7xl text-[#111111]" x-text="currentCard?.kanji"></span>
+            <span class="text-6xl sm:text-7xl text-theme" x-text="currentCard?.kanji"></span>
           </div>
           
           <div class="absolute w-full h-full backface-hidden card-back rounded-2xl flex flex-col items-center justify-center p-4 sm:p-6 rotate-y-180"
                @click.stop="showText ? toggleCurrentCard() : playSoundFromCard(currentCard)">
-            <span class="text-2xl sm:text-3xl font-medium text-[#111111]" 
+            <span class="text-2xl sm:text-3xl font-medium text-theme" 
                   x-text="showText ? currentCard?.reading : ''"></span>
-            <span class="text-base sm:text-lg text-[#787774] mt-3 text-center" x-text="currentCard?.meaning"></span>
-            <svg x-show="!showText" @click.stop="toggleCurrentCard()" class="w-6 h-6 mt-4 text-[#787774]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <span class="text-base sm:text-lg text-theme-secondary mt-3 text-center" x-text="currentCard?.meaning"></span>
+            <svg x-show="!showText" @click.stop="toggleCurrentCard()" class="w-6 h-6 mt-4 text-theme-secondary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
             </svg>
           </div>
@@ -152,7 +136,7 @@
             <svg class="w-4 h-4 inline ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
           </button>
         </div>
-        <span class="text-xs text-[#787774] font-mono" x-text="(currentIndex + 1) + ' / ' + cards.length"></span>
+        <span class="text-xs text-theme-secondary font-mono" x-text="(currentIndex + 1) + ' / ' + cards.length"></span>
       </div>
     </div>
   </div>
@@ -1107,11 +1091,6 @@
       };
     }
   </script>
-  <a href="index.html" class="sticky bottom-0 block py-4 text-center bg-[#F7F6F3]/80 backdrop-blur-sm text-[#787774] font-medium border-t border-[#EAEAEA]">
-    <span class="inline-flex items-center gap-2">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      Home
-    </span>
-  </a>
+  <a href="index.html" class="sticky-home"><span class="inline-flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Home</span></a>
 </body>
 </html>
