@@ -72,6 +72,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
   - `layout`: Grid or single view
   - `showText`: Sound mode or text/romaji mode
   - `voice`: Selected voice (Nanami, Google, Keita)
+  - `cardId`: Current card identifier (in single view only) - uses character/word data to maintain position across filter changes
 
 ## File Structure
 ```

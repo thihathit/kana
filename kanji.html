@@ -1013,7 +1013,21 @@
           if (voiceParam) {
             this.selectedVoice = voiceParam;
           }
-          this.currentIndex = 0;
+          const cardIdParam = params.get('cardId');
+          if (cardIdParam && this.cards.length > 0) {
+            const idx = this.cards.findIndex(c => this.getCardId(c) === cardIdParam);
+            if (idx !== -1) {
+              this.currentIndex = idx;
+            } else {
+              this.currentIndex = 0;
+            }
+          } else {
+            this.currentIndex = 0;
+          }
+        },
+
+        getCardId(card) {
+          return card.kanji + '|' + card.reading;
         },
 
         saveStateToUrl() {
@@ -1022,6 +1036,9 @@
           params.set('layout', this.layout);
           params.set('showText', this.showText);
           params.set('voice', this.selectedVoice);
+          if (this.layout === 'single' && this.currentCard) {
+            params.set('cardId', this.getCardId(this.currentCard));
+          }
           const newUrl = window.location.pathname + '?' + params.toString();
           history.pushState({}, '', newUrl);
         },
@@ -1066,8 +1083,11 @@
         },
 
         toggleFilter(filter) {
+          const prevCard = this.currentCard;
           this.filters[filter] = !this.filters[filter];
-          this.currentIndex = 0;
+          if (prevCard && !this.cards.includes(prevCard)) {
+            this.currentIndex = 0;
+          }
           this.saveStateToUrl();
         },
 
@@ -1091,6 +1111,7 @@
           if (!this.showText) {
             this.playSoundFromCard(this.currentCard);
           }
+          this.saveStateToUrl();
         },
 
         prevCard() {
@@ -1102,6 +1123,7 @@
           if (!this.showText) {
             this.playSoundFromCard(this.currentCard);
           }
+          this.saveStateToUrl();
         },
         
         shuffle() {
@@ -1114,6 +1136,8 @@
             const idxJ = this.allCards.indexOf(cardJ);
             [this.allCards[idxI], this.allCards[idxJ]] = [this.allCards[idxJ], this.allCards[idxI]];
           }
+          this.currentIndex = 0;
+          this.saveStateToUrl();
         },
         
         flipAll() {
@@ -1140,6 +1164,6 @@
       };
     }
   </script>
-  <a href="index.html" class="sticky-home"><span class="inline-flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Home</span></a>
+  <a href="/" class="sticky-home"><span class="inline-flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Home</span></a>
 </body>
 </html>
