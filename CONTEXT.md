@@ -74,6 +74,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ├── true_kotoba.html         # True vocabulary - split compounds into components
 ├── lookalike.html          # Lookalike kanas - distinguish similar characters
 ├── common.css              # Shared styles (variables, dark mode, components)
+├── favicon.svg             # Site favicon (hiragana か character)
 ├── jlpt_kotoba_data.json  # Vocabulary data (8385 words)
 ├── true_jlpt_kotoba_data.json  # Split compounds data (9075 entries)
 ├── download_from_edgetts.py   # Script to refresh audio files using Edge TTS
@@ -126,6 +127,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle, Voice Selector (always visible)
 - Grid view: listen button on card back plays audio
 - Single view: 🔊 Listen button always visible in navigation
+- Navigating to Prev/Next automatically plays audio
 - Click any card to flip; use Listen button to play audio
 - Audio files stored in `kotoba/` folder using vocabulary readings
 - Data is fetched dynamically from JSON, using `furigana` field (falls back to `word` if empty)
@@ -148,6 +150,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - Compound/Component counts update reactively based on N level filters
 - **Buttons**: Shuffle, Flip All/Unflip All, Layout Toggle, Voice Selector
 - Listen button on card back for audio playback (all cards)
+- Navigating to Prev/Next automatically plays audio
 - Audio files stored in `true_kotoba/` folder
 - Marked as BETA
 
