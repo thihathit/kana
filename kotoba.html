@@ -232,6 +232,7 @@
           } else {
             this.currentIndex = 0;
           }
+          this.playSound(this.currentCard);
         },
 
         prevCard() {
@@ -240,6 +241,7 @@
           } else {
             this.currentIndex = this.cards.length - 1;
           }
+          this.playSound(this.currentCard);
         },
         
         shuffle() {
