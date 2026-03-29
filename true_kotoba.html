@@ -42,7 +42,7 @@
         <span x-show="!allFlipped">Reveal All</span>
         <span x-show="allFlipped">Hide All</span>
       </button>
-      <button @click="layout = layout === 'grid' ? 'single' : 'grid'" class="btn px-4 sm:px-6 py-2 text-sm font-medium">
+      <button @click="toggleLayout()" class="btn px-4 sm:px-6 py-2 text-sm font-medium">
         <span x-show="layout === 'grid'">Single</span>
         <span x-show="layout === 'single'">Grid</span>
       </button>
@@ -180,6 +180,7 @@
         layout: 'grid',
 
         init() {
+          this.loadStateFromUrl();
           fetch('true_jlpt_kotoba_data.json')
             .then(res => res.json())
             .then(data => {
@@ -193,6 +194,7 @@
                 flipped: false
               }));
               this.loaded = true;
+              this.loadStateFromUrl();
             })
             .catch(e => console.error('Failed to load vocabulary:', e));
           document.addEventListener('keydown', (e) => {
@@ -200,6 +202,54 @@
             if (e.key === 'ArrowLeft') this.prevCard();
             if (e.key === 'ArrowRight') this.nextCard();
           });
+          window.addEventListener('popstate', () => this.loadStateFromUrl());
+        },
+
+        loadStateFromUrl() {
+          const params = new URLSearchParams(window.location.search);
+          const filtersParam = params.get('filters');
+          if (filtersParam && this.loaded) {
+            try {
+              const parsed = JSON.parse(filtersParam);
+              Object.keys(parsed).forEach(key => {
+                if (this.filters.hasOwnProperty(key)) {
+                  this.filters[key] = parsed[key];
+                }
+              });
+            } catch (e) {}
+          }
+          const typeFiltersParam = params.get('typeFilters');
+          if (typeFiltersParam && this.loaded) {
+            try {
+              const parsed = JSON.parse(typeFiltersParam);
+              Object.keys(parsed).forEach(key => {
+                if (this.typeFilters.hasOwnProperty(key)) {
+                  this.typeFilters[key] = parsed[key];
+                }
+              });
+            } catch (e) {}
+          }
+          const layoutParam = params.get('layout');
+          if (layoutParam) {
+            this.layout = layoutParam;
+          }
+          const voiceParam = params.get('voice');
+          if (voiceParam) {
+            this.selectedVoice = voiceParam;
+          }
+          this.currentIndex = 0;
+        },
+
+        saveStateToUrl() {
+          const params = new URLSearchParams();
+          if (this.loaded) {
+            params.set('filters', JSON.stringify(this.filters));
+            params.set('typeFilters', JSON.stringify(this.typeFilters));
+          }
+          params.set('layout', this.layout);
+          params.set('voice', this.selectedVoice);
+          const newUrl = window.location.pathname + '?' + params.toString();
+          history.pushState({}, '', newUrl);
         },
 
         currentIndex: 0,
@@ -250,16 +300,24 @@
           const currentIndex = this.voices.findIndex(v => v.id === this.selectedVoice);
           const nextIndex = (currentIndex + 1) % this.voices.length;
           this.selectedVoice = this.voices[nextIndex].id;
+          this.saveStateToUrl();
+        },
+
+        toggleLayout() {
+          this.layout = this.layout === 'grid' ? 'single' : 'grid';
+          this.saveStateToUrl();
         },
 
         toggleFilter(filter) {
           this.filters[filter] = !this.filters[filter];
           this.currentIndex = 0;
+          this.saveStateToUrl();
         },
 
         toggleTypeFilter(type) {
           this.typeFilters[type] = !this.typeFilters[type];
           this.currentIndex = 0;
+          this.saveStateToUrl();
         },
 
         flipCard(index) {

@@ -62,6 +62,17 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 - Each shows count of characters in that category
 - Active filters highlighted in black (#111111)
 
+### 7. URL State Persistence
+- All filter states persist across page refresh via query parameters
+- Uses HistoryAPI to push new URL when filters change (no page reload)
+- Browser back/forward buttons restore previous filter state
+- URL parameters saved:
+  - `filters`: JSON object with category filter states
+  - `typeFilters`: For True Kotoba - compound/component toggle states
+  - `layout`: Grid or single view
+  - `showText`: Sound mode or text/romaji mode
+  - `voice`: Selected voice (Nanami, Google, Keita)
+
 ## File Structure
 ```
 /home/debian/projects/kana/
@@ -183,6 +194,7 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 8. Toggle Sound/Text(Romaji or Reading) to switch between audio mode and text mode (not available on Lookalikes or Kotoba)
 9. Click the Voice button to cycle between Nanami, Google, or Keita voices
 10. In Single view, use Left/Right arrow keys to navigate
+11. **Filter state persists across page refresh** - URL updates automatically, so you can bookmark or share links with specific filters active
 
 ## Future Enhancements (Potential)
 - Add progress tracking
