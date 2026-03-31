@@ -89,9 +89,10 @@ Japanese flashcard web application with flip cards, shuffle, category filtering,
 ├── favicon.svg             # Site favicon (hiragana か character)
 ├── jlpt_kotoba_data.json  # Vocabulary data (8385 words)
 ├── true_jlpt_kotoba_data.json  # Split compounds data (9075 entries)
-├── download_from_edgetts.py   # Script to refresh audio files using Edge TTS
-├── download_from_google.py    # Script to refresh audio files using Google TTS
 ├── character_lists.py         # Shared character lists (imports from JSON)
+├── download_from_edgetts.py   # Generate audio using Edge TTS (Nanami, Keita voices)
+├── download_from_google.py    # Generate audio using Google TTS
+├── cleanup_audio.py           # Purge orphaned audio files in all directories
 ├── google-tts/        # Google TTS audio files
 │   ├── hiragana/       # 104 hiragana audio files
 │   ├── katakana/       # 104 katakana audio files
