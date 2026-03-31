@@ -389,7 +389,7 @@
   {
     "word": "九",
     "meaning": "nine",
-    "furigana": "きゅう / く",
+    "furigana": "きゅう ・・ く",
     "romaji": "kyū / ku",
     "level": 5,
     "is_compound": true,
@@ -767,7 +767,7 @@
   {
     "word": "何",
     "meaning": "what",
-    "furigana": "なん / なに",
+    "furigana": "なん ・・ なに",
     "romaji": "nan / nani",
     "level": 5,
     "is_compound": true,
@@ -785,7 +785,7 @@
   {
     "word": "毎月",
     "meaning": "every month",
-    "furigana": "まいげつ / まいつき",
+    "furigana": "まいげつ ・・ まいつき",
     "romaji": "maigetsu / maitsuki",
     "level": 5,
     "is_compound": true,
@@ -1053,7 +1053,7 @@
     "parent": ""
   },
   {
-    "word": "いい / よい",
+    "word": "いい ・・ よい",
     "meaning": "good",
     "furigana": "",
     "romaji": "ii / yoi",
@@ -2196,7 +2196,7 @@
     "parent": "言葉"
   },
   {
-    "word": "キロ / キログラム",
+    "word": "キロ ・・ キログラム",
     "meaning": "kilogram",
     "furigana": "",
     "romaji": "kiro / kiroguramu",
@@ -2610,7 +2610,7 @@
     "parent": "自転車"
   },
   {
-    "word": "ラジカセ / ラジオカセット",
+    "word": "ラジカセ ・・ ラジオカセット",
     "meaning": "radio cassette player",
     "furigana": "",
     "romaji": "rajikase / rajiokasetto",
@@ -2693,7 +2693,7 @@
   {
     "word": "四",
     "meaning": "four",
-    "furigana": "し / よん",
+    "furigana": "し ・・ よん",
     "romaji": "shi / yon",
     "level": 5,
     "is_compound": true,
@@ -2736,7 +2736,7 @@
     "parent": ""
   },
   {
-    "word": "そうして / そして",
+    "word": "そうして ・・ そして",
     "meaning": "and",
     "furigana": "",
     "romaji": "sōshite / soshite",
@@ -3008,7 +3008,7 @@
   {
     "word": "七",
     "meaning": "seven",
-    "furigana": "しち / なな",
+    "furigana": "しち ・・ なな",
     "romaji": "shichi / nana",
     "level": 5,
     "is_compound": true,
@@ -3744,7 +3744,7 @@
     "parent": ""
   },
   {
-    "word": "キロ / キロメートル",
+    "word": "キロ ・・ キロメートル",
     "meaning": "kilometre",
     "furigana": "",
     "romaji": "kiro / kiromētoru",
@@ -4896,7 +4896,7 @@
     "parent": ""
   },
   {
-    "word": "じゃ / じゃあ",
+    "word": "じゃ ・・ じゃあ",
     "meaning": "well then…",
     "furigana": "",
     "romaji": "ja / jaa",
@@ -4970,7 +4970,7 @@
   {
     "word": "毎年",
     "meaning": "every year",
-    "furigana": "まいねん / まいとし",
+    "furigana": "まいねん ・・ まいとし",
     "romaji": "mainen / maitoshi",
     "level": 5,
     "is_compound": true,
@@ -5436,7 +5436,7 @@
     "parent": ""
   },
   {
-    "word": "川 / 河",
+    "word": "川 ・・ 河",
     "meaning": "river",
     "furigana": "かわ",
     "romaji": "kawa",
@@ -6867,7 +6867,7 @@
     "parent": ""
   },
   {
-    "word": "伯父 / 叔父",
+    "word": "伯父 ・・ 叔父",
     "meaning": "grandfather, male senior citizen",
     "furigana": "おじいさん",
     "romaji": "ojiisan",
@@ -7191,7 +7191,7 @@
     "parent": ""
   },
   {
-    "word": "丸い / 円い",
+    "word": "丸い ・・ 円い",
     "meaning": "round, circular",
     "furigana": "まるい",
     "romaji": "marui",
@@ -7263,7 +7263,7 @@
     "parent": ""
   },
   {
-    "word": "伯母さん / 叔母さん",
+    "word": "伯母さん ・・ 叔母さん",
     "meaning": "aunt",
     "furigana": "おばさん",
     "romaji": "obasan",
@@ -7821,7 +7821,7 @@
     "parent": ""
   },
   {
-    "word": "初め / 始め",
+    "word": "初め ・・ 始め",
     "meaning": "beginning",
     "furigana": "はじめ",
     "romaji": "hajime",
@@ -8408,7 +8408,7 @@
   {
     "word": "お・金持ち",
     "meaning": "rich man",
-    "furigana": "かねもち / おかねもち",
+    "furigana": "かねもち ・・ おかねもち",
     "romaji": "kanemochi / okanemochi",
     "level": 4,
     "is_compound": true,
@@ -10638,7 +10638,7 @@
     "parent": ""
   },
   {
-    "word": "コンピュータ / コンピューター",
+    "word": "コンピュータ ・・ コンピューター",
     "meaning": "computer",
     "furigana": "",
     "romaji": "konpyūta / konpyūtā",
@@ -11358,7 +11358,7 @@
     "parent": ""
   },
   {
-    "word": "やはり / やっぱり",
+    "word": "やはり ・・ やっぱり",
     "meaning": "as I thought, absolutely",
     "furigana": "",
     "romaji": "yahari / yappari",
@@ -13140,7 +13140,7 @@
     "parent": ""
   },
   {
-    "word": "けれど / けれども",
+    "word": "けれど ・・ けれども",
     "meaning": "however",
     "furigana": "",
     "romaji": "keredo / keredomo",
@@ -13212,7 +13212,7 @@
     "parent": ""
   },
   {
-    "word": "堅 / 硬/固い",
+    "word": "堅 ・・ 硬・・固い",
     "meaning": "hard",
     "furigana": "かたい",
     "romaji": "katai",
@@ -13473,7 +13473,7 @@
     "parent": ""
   },
   {
-    "word": "レポート / リポート",
+    "word": "レポート ・・ リポート",
     "meaning": "report",
     "furigana": "",
     "romaji": "repōto / ripōto",
@@ -33777,7 +33777,7 @@
     "parent": ""
   },
   {
-    "word": "アイデア / アイディア",
+    "word": "アイデア ・・ アイディア",
     "meaning": "idea",
     "furigana": "",
     "romaji": "aidea / aidia",
@@ -35721,7 +35721,7 @@
     "parent": ""
   },
   {
-    "word": "作る / 造る",
+    "word": "作る ・・ 造る",
     "meaning": "to make, to create",
     "furigana": "つくる",
     "romaji": "tsukuru",
@@ -49113,7 +49113,7 @@
     "parent": ""
   },
   {
-    "word": "けれど / けれども",
+    "word": "けれど ・・ けれども",
     "meaning": "but, however",
     "furigana": "",
     "romaji": "keredo / keredomo",
